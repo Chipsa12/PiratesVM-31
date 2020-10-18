@@ -8,7 +8,7 @@ class Router:
             ('GET', '/api/sqr/{value}', self.sqrHandler),
             ('*', '/', self.staticHandler)
         ]
-        app.router.add_static('/js/', path=str('./public/js/'))
+        app.router.add_static('/js/', path=str('./public/'))
 
         for route in routes:
             app.router.add_route(route[0], route[1], route[2])

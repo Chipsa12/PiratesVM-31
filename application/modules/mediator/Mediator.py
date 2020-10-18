@@ -1,14 +1,14 @@
 class Mediator:
-    EVENT_TYPES = {}
+    EVENTS = {}
     TRIGGERS = {}
     events = {}
     triggers = {}
 
-    def __init__(self, EVENT_TYPES, TRIGGERS):
-        self.EVENT_TYPES = EVENT_TYPES
+    def __init__(self, EVENTS, TRIGGERS):
+        self.EVENTS = EVENTS
         self.TRIGGERS = TRIGGERS
-        for key in self.EVENT_TYPES.keys():
-            self.events.update({self.EVENT_TYPES[key]: []})
+        for key in self.EVENTS.keys():
+            self.events.update({self.EVENTS[key]: []})
 
     def __del__(self):
         self.events.clear()
@@ -19,9 +19,6 @@ class Mediator:
     def getTriggers(self):
         return self.TRIGGERS
 
-    def gettriggers(self):
-        return self.triggers
-
     def set(self, name, func):
         if self.TRIGGERS.get(name) and func:
             self.triggers.update({name: func})
@@ -29,22 +26,25 @@ class Mediator:
     def get(self, name, data=None):
         if name:
             cb = self.triggers.get(name)
-            return cb(data)
+            if cb and cb(data):
+                return cb(data)
+        return None
 
     # EVENTS
 
-    def getEventTypes(self):
-        return self.EVENT_TYPES
+    def getEvents(self):
+        return self.EVENTS
 
     # подписаться на событие
     def subscribe(self, name, func):
-        if name and func:
-            self.events.update({self.events.get(name): func})
+        if self.EVENTS.get(name) and func:
+            self.events.update({name: func})
+        return None
 
     # дернуть события (вызвать все колбеки, которые в него прописаны)
     def call(self, name, data=None):
         if name:
             cbs = self.events.get(name)
             if cbs:
-                for cb in cbs:
-                    cb(data)
+                return cbs(data)
+        return None

@@ -27,4 +27,5 @@ UserManager(db, mediator, sio, SETTINGS['MESSAGES'])
 ChatManager(db, mediator, sio, SETTINGS['MESSAGES'], SETTINGS['CHAT'])
 LobbyManager(mediator=mediator, sio=sio, MESSAGES=SETTINGS['MESSAGES'])
 
+
 web.run_app(app, port=9000)

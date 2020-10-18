@@ -1,2 +1,4 @@
 .idea
 *.xlsx
+node_modules
+__pycache__

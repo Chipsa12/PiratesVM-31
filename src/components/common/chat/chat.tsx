@@ -11,6 +11,7 @@ import socket from '../../../helpers/socket';
 import { SOCKET_EVENTS } from '../../../constants/socket.constants';
 import { eventTypes } from '../../../constants/event-types';
 import { MAX_CHAT_INPUT_LENGTH } from '../../../constants/chat.constants';
+import OnlineUsers from "../online-users/online-users";
 
 const StyledChat = styled.div`
   padding: 20px 10px;
@@ -22,6 +23,12 @@ const StyledChat = styled.div`
   align-items: center;
   justify-content: center;
   flex-flow: column;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  width: 100%;
+  height: 293px;
 `;
 
 const StyledForm = styled.form`
@@ -65,18 +72,21 @@ const Chat = () => {
   return (
     <StyledChat>
       <Messages messages={messages} />
-      <StyledForm onSubmit={handleFormSubmit} className="send-message">
-        <Textarea
-          id="send-message"
-          name="message"
-          value={message}
-          onKeyUp={handleTextareaKeyUp}
-          onChange={handleInputChange}
-          maxLength={MAX_CHAT_INPUT_LENGTH}
-          placeholder="Введите сообщение"
-        />
-        <Button type="submit" onClick={handleSendMessage}>{'>'}</Button>
-      </StyledForm>
+      <Wrapper>
+        <StyledForm onSubmit={handleFormSubmit} className="send-message">
+          <Textarea
+            id="send-message"
+            name="message"
+            value={message}
+            onKeyUp={handleTextareaKeyUp}
+            onChange={handleInputChange}
+            maxLength={MAX_CHAT_INPUT_LENGTH}
+            placeholder="Введите сообщение"
+          />
+          <Button type="submit" onClick={handleSendMessage}>{'>'}</Button>
+        </StyledForm>
+        <OnlineUsers></OnlineUsers>
+      </Wrapper>
     </StyledChat>
   );
 };

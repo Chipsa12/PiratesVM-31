@@ -4,7 +4,7 @@ SETTINGS = {
         'HOST': '127.0.0.1',
         'PORT': '5432',
         'USER': 'vm31-user',
-        'PASS': '12345678',
+        'PASS': 'qwerty',
     },
     'CHAT': {
         'ECHO_DISTANCE': 10,

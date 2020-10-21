@@ -1,21 +1,30 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { CSSProperties } from 'styled-components';
 
 const bannerImage = require('../../../assets/banner.png');
 
+const StyledContainer = styled.div<BannerProps>`
+  position: relative;
+  height: ${props => props.height};
+`;
+
 const StyledBanner = styled.div`
-  position: absolute;
   width: 100%;
-  height: 130px;
-  top: -140px;
+  height: 100%;
   background: url(${bannerImage}) center no-repeat;
   background-size: contain;
 `;
 
-const Banner = () => (
-  <div style={{ position: 'relative' }}>
+interface BannerProps {
+  height?: CSSProperties['height'];
+}
+
+const Banner: React.FC<BannerProps> = ({
+  height = '187px',
+}) => (
+  <StyledContainer height={height}>
     <StyledBanner />
-  </div>
+  </StyledContainer>
 );
 
 export default Banner;

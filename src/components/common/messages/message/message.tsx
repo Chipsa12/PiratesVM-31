@@ -1,10 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
-export interface MessageInterface {
-  name: string;
-  message: string;
-}
+import { MessageInterface } from '../../../../interfaces/chat.interfaces';
 
 const StyledMessage = styled.div`
   display: flex;
@@ -12,7 +8,6 @@ const StyledMessage = styled.div`
   padding: 5px 15px;
   color: ${({ theme }) => theme.colors.text};
   width: 100%;
-  font-size: 2.4rem;
 `;
 
 const UserName = styled.div`
@@ -24,15 +19,10 @@ const UserMessage = styled.div`
   word-break: break-word;
 `;
 
-export interface MessageInterface {
-  name: string;
-  message: string;
-}
-
 const Message: React.FC<MessageInterface> = ({
   name,
   message,
-}) => (
+}): React.ReactElement => (
   <StyledMessage>
     <UserName>{name}: </UserName>
     <UserMessage>{message}</UserMessage>

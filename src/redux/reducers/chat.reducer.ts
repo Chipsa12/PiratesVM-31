@@ -1,5 +1,12 @@
 import { ADD_MESSAGES } from '../../constants/action-types.constants';
-import { CHAT_INITIAL_STATE } from '../../constants/chat.constants';
+import { MessagesInterface } from '../../interfaces/chat.interfaces';
+
+const CHAT_INITIAL_STATE: ChatStateInterface = {
+  messages: [],
+};
+
+export interface ChatStateInterface extends MessagesInterface {
+}
 
 export default (state = CHAT_INITIAL_STATE, action) => {
   switch (action.type) {

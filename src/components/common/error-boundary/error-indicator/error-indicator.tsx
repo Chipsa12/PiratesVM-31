@@ -2,10 +2,10 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import Button from '../button/button';
-import { BASE_URL } from '../../../constants/url.constants';
+import Button from '../../button';
+import { BASE_URL } from '../../../../constants/url.constants';
 
-const errorImage = require('../../../assets/error.png');
+const errorImage = require('../../../../assets/error.png');
 
 const Container = styled.div`
   position: absolute;

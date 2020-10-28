@@ -1,9 +1,9 @@
-import { ADD_MESSAGES } from '../../constants/action-types.constants';
-import { MessageInterface } from '../../components/common/messages/message/message';
+import * as actions from '../../constants/action-types.constants';
 import { SOCKET_EVENTS } from '../../constants/socket.constants';
+import { MessageInterface } from '../../interfaces/chat.interfaces';
 
-export const addMessages = (messages: MessageInterface | MessageInterface[]) => ({
-  type: ADD_MESSAGES,
+export const addMessages = (messages: MessageInterface | MessageInterface[]) => (dispatch) => dispatch({
+  type: actions.ADD_MESSAGES,
   payload: messages instanceof Array ? messages : [messages],
 });
 

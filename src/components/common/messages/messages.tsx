@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import Message, { MessageInterface } from './message/message';
+import Message from './message';
 import Scrollbar from '../scrollbar/scrollbar';
+import { MessagesInterface } from '../../../interfaces/chat.interfaces';
 
 const StyledMessages = styled.div`
   display: flex;
@@ -11,10 +12,6 @@ const StyledMessages = styled.div`
   width: 100%;
   height: 100%;
 `;
-
-export interface MessagesInterface {
-  messages: MessageInterface[];
-}
 
 const Messages: React.FC<MessagesInterface> = ({
   messages,

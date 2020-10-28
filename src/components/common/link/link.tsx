@@ -5,15 +5,18 @@ import { Link as LinkRouter } from 'react-router-dom';
 const StyledLink = styled(LinkRouter)`
   margin: 10px 0;
   padding: 20px 10px;
+  width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: ${(({ theme: { colors } }) => colors.transparent)};
+  background: ${(props) => props.active ? props.theme.colors.text : props.theme.colors.transparent};
   border-radius: 10px;
   border: 1px solid ${({ theme: { colors }}) => colors.text};
-  color: ${({ theme: { colors }}) => colors.text};
+  color: ${(props) => props.active ? props.theme.colors.primary : props.theme.colors.text};
   text-decoration: none;
   font-size: ${({ theme }) => theme.fontSizes[3]};
+  text-transform: uppercase;
+  box-sizing: border-box;
   
   &:hover,
   &:focus {
@@ -27,14 +30,16 @@ const StyledLink = styled(LinkRouter)`
 interface LinkProps {
   children: React.ReactNode;
   href: string;
+  active?: boolean;
 }
 
 const Link: React.FC<LinkProps & React.AnchorHTMLAttributes<HTMLAnchorElement>> = ({
   children,
   href,
+  active = false,
   ...attrs
 }) => (
-  <StyledLink to={href} {...attrs}>
+  <StyledLink active={active.toString()} to={href} {...attrs}>
     {children}
   </StyledLink>
 );

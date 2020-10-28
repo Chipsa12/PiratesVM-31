@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
-import Banner from '../common/banner/banner';
+import Banner from '../common/banner';
 import Link from '../common/link/link';
-import { Container } from '../authorization/authorization';
-import { AUTH_URL, CREATE_GAME_URL, FIND_GAME_URL, SETTINGS_URL } from '../../constants/url.constants';
+import { Container } from '../authorization';
+import { AUTH_URL, CREATE_TEAM_URL, LOBBY_URL } from '../../constants/url.constants';
 import AuthContext from '../../contexts/auth.context';
 
 const StyledWrapper = styled.div`
@@ -38,7 +38,7 @@ const StyledLink = styled(Link)`
   &:focus {
     position: relative;
     width: 104%;
-    left: -4%;
+    left: -2%;
   }
 `;
 
@@ -54,10 +54,9 @@ const Menu = () => {
           </StyledBanner>
         </StyledBannerContainer>
         <StyledMenu>
-          <StyledLink href={CREATE_GAME_URL}>СОЗДАТЬ ИГРУ</StyledLink>
-          <StyledLink href={FIND_GAME_URL}>НАЙТИ ИГРУ</StyledLink>
-          <StyledLink href={SETTINGS_URL}>НАСТРОЙКИ</StyledLink>
-          <StyledLink href={AUTH_URL} onClick={logout}>ВЫЙТИ</StyledLink>
+          <StyledLink href={CREATE_TEAM_URL}>Создать игру</StyledLink>
+          <StyledLink href={LOBBY_URL}>Найти игру</StyledLink>
+          <StyledLink href={AUTH_URL} onClick={logout}>Выйти</StyledLink>
         </StyledMenu>
       </StyledWrapper>
     </Container>

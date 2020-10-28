@@ -3,23 +3,26 @@ import styled from 'styled-components';
 
 const StyledLabel = styled.label`
   color: ${({ theme }) => theme.colors.text};
-  font-size: 1.6rem;
-  font-weight: 600;
+  font-size: ${({ theme }) => theme.fontSizes[1]};
+  text-transform: uppercase;
+  cursor: pointer;
 `;
 
 const StyledInput = styled.input`
-  font-size: 2.2rem;
+  font-size: ${({ theme }) => theme.fontSizes[3]};
   padding: 20px 8px;
-  min-width: 280px;
   width: 100%;
   margin: 8px;
   color: ${({ theme }) => theme.colors.text};
+  box-sizing: border-box;
   background: transparent;
-  border: none;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.accent};
+  border: 1px solid ${({ theme }) => theme.colors.text};
+  border-radius: 10px;
   outline: none;
+  text-transform: uppercase;
   
   &::placeholder {
+    text-transform: uppercase;
     font-size: 2rem;
     color: ${({ theme }) => theme.colors.text};
   }
@@ -29,6 +32,10 @@ const StyledInput = styled.input`
   &:-webkit-autofill:focus, 
   &:-webkit-autofill:active {
     background-color: ${({ theme }) => theme.colors.accent};
+  }
+  
+  &[type="checkbox"] {
+    cursor: pointer;
   }
 `;
 

@@ -18,8 +18,6 @@ export const GlobalStyle = createGlobalStyle`
     min-width: 100vw;
     min-height: 100vh;
   }
-
-  ${colors}
 `;
 
 export const AppTheme = {
@@ -29,6 +27,7 @@ export const AppTheme = {
     title: 1.25,
     double: 2,
   },
+  fontSizes: ['1.2rem', '1.4rem', '1.6rem', '1.8rem', '2.0rem', '2.4rem', '3.6rem', '4.8rem', '8.0rem', '9.6rem'],
   fontWeights: [100, 200, 300, 400, 500, 600, 700, 800, 900],
   fonts: {
     Roboto: 'Roboto, sans-serif',

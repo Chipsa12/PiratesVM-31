@@ -65,7 +65,7 @@ class DB:
     
     @toArrayOfDicts
     def getUsersOnline(self):
-        self.cursor.execute("SELECT id, name, login, token FROM users WHERE token != 'NULL' ")
+        self.cursor.execute("SELECT id, name, login, token FROM users WHERE token != '' ")
         return self.cursor.fetchall()
 
     @toDict
@@ -130,8 +130,8 @@ class DB:
         self.connect.commit()
         return True
 
-    def insertMessage(self, message, userId, room):
+    def insertMessage(self, data):
         query = 'INSERT INTO messages (message, "userId", room, time) VALUES (%s, %s, %s, now())'
-        self.cursor.execute(query, (message, userId, room))
+        self.cursor.execute(query, (data['message'], data['userId'], data['room']))
         self.connect.commit()
         return True

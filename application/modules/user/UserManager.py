@@ -13,16 +13,17 @@ class UserManager(BaseManager):
 
         # регистрируем триггеры
         self.mediator.set(self.TRIGGERS['GET_USER_BY_TOKEN'], self.__getUserByToken)
-        self.mediator.set(self.TRIGGERS['GET_USER_BY_LOGIN'], self.__getUserByLogin)
-        self.mediator.set(self.TRIGGERS['GET_HASH_BY_LOGIN'], self.__getHashByLogin)
+        self.mediator.set(self.TRIGGERS['GET_USER_BY_ID'], self.__getUserById)
         # регистрируем события
-        self.mediator.subscribe(self.EVENTS['INSERT_USER'], self.__insertUser)
-        self.mediator.subscribe(self.EVENTS['UPDATE_TOKEN_BY_LOGIN'], self.__updateTokenByLogin)
         self.sio.on(self.MESSAGES['USER_LOGIN'], self.auth)
         self.sio.on(self.MESSAGES['USER_LOGOUT'], self.logout)
         self.sio.on(self.MESSAGES['USER_SIGNUP'], self.registration)
         self.sio.on(self.MESSAGES['USERS_ONLINE'], self.getUsersOnline)
         self.sio.on('disconnect', self.logout)
+
+    # def __getUserByToken1(self, data):
+    #     return self.db.getUserByToken(data['token'])
+
 
     def __generateToken(self, login):
         if login:
@@ -34,38 +35,28 @@ class UserManager(BaseManager):
             return hashlib.md5((str1 + str2).encode("utf-8")).hexdigest()
         return None
 
-    def __getUserByToken(self, token=None):
-        if token:
-            for user in self.users:
-                if user['token'] == token:
-                    return user
+    def __getUserByToken(self, data):
+        if 'token' in data:
+            for key in self.users:
+                user = self.users[key]
+                if user.getSelf()['token'] == data['token']:
+                    return user.getSelf()
+        return None
+
+    def __getUserById(self, data):
+        if 'id' in data:
+            for key in self.users:
+                user = self.users[key]
+                if user.getSelf()['id'] == data['id']:
+                    return user.getSelf()
         return None
 
     def __getUserBySid(self, sid=None):
         if sid:
-            for user in self.users:
-                if user['sid'] == sid:
-                    return user
-        return None
-
-    def __getUserByLogin(self, data):
-        if data:
-            return self.db.getUserByLogin(data['login'])
-        return None
-
-    def __getHashByLogin(self, data):
-        if data:
-            return self.db.getHashByLogin(data['login'])
-        return None
-
-    def __insertUser(self, data):
-        if data:
-            return self.db.insertUser(data['name'], data['login'], data['password'], data['token'])
-        return None
-
-    def __updateTokenByLogin(self, data):
-        if data:
-            return self.db.updateTokenByLogin(data['login'], data['token'])
+            for key in self.users:
+                for user in self.users[key]:
+                    if user.getSelf()['sid'] == sid:
+                        return user.getSelf()
         return None
 
     def __getUsersOnline(self):
@@ -74,70 +65,64 @@ class UserManager(BaseManager):
             users.append(self.users[key].get())
         return users
 
-    async def registration(self, sio, data):
+    async def getUsersOnline(self, sid):
+        await self.sio.emit(self.MESSAGES['USERS_ONLINE'], self.__getUsersOnline())
+
+    async def registration(self, sid, data):
         name = data['login']
         login = data['login']
         password = data['hash']
-        user = self.mediator.get(self.TRIGGERS['GET_USER_BY_LOGIN'], dict(login=login))
-        if user or not name or not login or not password:
-            return None
-        else:
+        if name and login and password:
+            user = self.db.getUserByLogin(login=login)
+            if user:
+                await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
+                return
             token = self.__generateToken(login)
-            self.mediator.call(self.EVENTS['INSERT_USER'], dict(name=name, login=login, password=password, token=token))
-            await self.sio.emit(self.MESSAGES['USER_SIGNUP'], dict(token=token), room=sio)
-            return True
+            self.db.insertUser(name=name, login=login, password=password, token=token)
+            userData = self.db.getUserByToken(token)
+            userData['sid'] = sid
+            self.users[userData['id']] = User(userData)
+            await self.sio.emit(self.MESSAGES['USER_SIGNUP'], self.users[userData['id']].getSelf(), room=sid)
+            await self.getUsersOnline(sid)
+            return
+        await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
 
     async def auth(self, sid, data):
         login = data['login']
         hash = data['hash']
         rnd = data['random']
         if login and hash and rnd:
-            hashDB = self.mediator.get(self.TRIGGERS['GET_HASH_BY_LOGIN'], dict(login=login))
+            hashDB = self.db.getHashByLogin(login=login)
+            print(hashDB, self.__generateHash(hashDB, str(rnd)))
             if self.__generateHash(hashDB, str(rnd)) == hash:
                 token = self.__generateToken(login)
-                # self.mediator.call(self.EVENTS['UPDATE_TOKEN_BY_LOGIN'], dict(login=login, token=token))
                 self.db.updateTokenByLogin(login, token)
                 userData = self.db.getUserByToken(token)
                 userData['sid'] = sid
                 self.users[userData['id']] = User(userData)
                 # добавляем пользователя в список пользователей онлайн
-                self.mediator.call(self.EVENTS['ADD_USER_ONLINE'], dict(token=token, sid=sid, coord=None))
                 await self.sio.emit(self.MESSAGES['USER_LOGIN'], self.users[userData['id']].getSelf(), room=sid)
                 await self.getUsersOnline(sid)
-                return True
-        return False
+                return
+        await self.sio.emit(self.MESSAGES['USER_LOGIN'], False, room=sid)
 
     async def logout(self, sid, data):
-        user = None
+        # user = None
         # если токен, то взять юзера по токену (из self.users)
         if 'token' in data:
-            user = self.__getUserByToken(token=data['token'])
+            user = self.__getUserByToken(data)
         # иначе взять по sid (из self.users)
         else:
             user = self.__getUserBySid(sid=sid)
-        if user is not None:
+        if user:  # is not None:
             # бросить событие, что пользователь мухожук
-            self.mediator.call(self.EVENTS['USER_LOGOUT'], user)
+            self.mediator.call(self.EVENTS['USER_LOGOUT'], dict(sid=sid, token=user['token']))
             # удалить пользователя из self.users
             del self.users[user['id']]
             # перезаписать токен в БД
             self.db.updateUserTokenById(id=user['id'], token='')
             # ответить пользователю о результатах его логаута
-            await self.sio.emit(self.MESSAGES['USER_LOGOUT'], True, sid=sid)
+            await self.sio.emit(self.MESSAGES['USER_LOGOUT'], True, room=sid)
+            await self.getUsersOnline(sid)
             return
-        await self.sio.emit(self.MESSAGES['USER_LOGOUT'], False, sid=sid)
-
-        '''
-        token = data['token']
-        user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'],  dict(token=token))
-        # удаляем пользователя из списка пользователей онлайн
-        self.mediator.call(self.EVENTS['DELETE_USER_ONLINE'], dict(token=token))
-        token = 'NULL'
-        if user:
-            self.mediator.call(self.EVENTS['UPDATE_TOKEN_BY_LOGIN'], dict(login=user['login'], token=token))
-            return True
-        return False
-        '''
-
-    async def getUsersOnline(self, sid):
-        await self.sio.emit(self.MESSAGES['USERS_ONLINE'], self.__getUsersOnline())
+        await self.sio.emit(self.MESSAGES['USER_LOGOUT'], False, room=sid)

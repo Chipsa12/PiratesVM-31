@@ -1,1 +1,0 @@
-export const ADD_MESSAGES = 'CHAT/ADD_MESSAGES';

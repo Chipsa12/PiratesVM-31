@@ -5,50 +5,68 @@ import socket from '../helpers/socket';
 import { SOCKET_EVENTS } from '../constants/socket.constants';
 import { AuthContextInterface } from '../contexts/auth.context';
 import { passwordReg } from '../constants/authorization.constants';
+import { UserInterface } from '../interfaces/user.interfaces';
+
+export const USER_DETAILS_INITIAL = {
+  id: 1,
+  token: '',
+  name: '',
+};
 
 const useAuth = () => {
-  const [token, setToken] = useState('');
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [userDetails, setUserDetails] = useState<UserInterface>(USER_DETAILS_INITIAL);
 
   const isValidPassword = (password: string) => passwordReg.test(password);
 
   const login: AuthContextInterface['login'] = useCallback(({ login, password }) => {
+    setLoading(true);
     if (isValidPassword(password)) {
       const random = Math.random();
       const hash = md5(md5(password + login) + random);
       socket.emit(SOCKET_EVENTS.USER_LOGIN, { login, hash, random });
-      socket.once(SOCKET_EVENTS.USER_LOGIN, ({ token }: { token: string}) => {
-        if (token) {
-          setToken(token);
-          localStorage.setItem(TOKEN_STORAGE, token);
+      socket.once(SOCKET_EVENTS.USER_LOGIN, (data) => {
+        if (data) {
+          setUserDetails(data);
+          setIsAuth(true);
+          localStorage.setItem(TOKEN_STORAGE, data.token);
         }
+        setLoading(false);
       });
     }
   }, []);
 
   const logout: AuthContextInterface['logout'] = useCallback(() => {
-    socket.emit(SOCKET_EVENTS.USER_LOGOUT, { token });
+    setLoading(true);
+    socket.emit(SOCKET_EVENTS.USER_LOGOUT, { token: userDetails.token });
     socket.once(SOCKET_EVENTS.USER_LOGOUT, (isLogout) => {
       if (isLogout) {
-        setToken('');
+        setUserDetails(USER_DETAILS_INITIAL);
+        setIsAuth(false);
         localStorage.setItem(TOKEN_STORAGE, '');
       }
+      setLoading(false);
     });
-  }, [token]);
+  }, [userDetails.token]);
 
   const registration: AuthContextInterface['registration'] = useCallback(({ login, password }) => {
+    setLoading(true);
     if (isValidPassword(password)) {
       const hash = md5(password + login);
       socket.emit(SOCKET_EVENTS.USER_SIGNUP, { login, hash })
-      socket.once(SOCKET_EVENTS.USER_SIGNUP, ({ token }: { token: string}) => {
-        if (token) {
-          setToken(token);
-          localStorage.setItem(TOKEN_STORAGE, token);
+      socket.once(SOCKET_EVENTS.USER_SIGNUP, (data) => {
+        if (data) {
+          setUserDetails(data);
+          setIsAuth(true);
+          localStorage.setItem(TOKEN_STORAGE, data.token);
         }
+        setLoading(false);
       })
     }
   }, []);
 
-  return { login, logout, token, registration };
+  return { isAuth, userDetails, loading, login, logout, registration };
 };
 
 export default useAuth;

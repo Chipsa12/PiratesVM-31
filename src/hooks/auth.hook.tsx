@@ -4,7 +4,6 @@ import { TOKEN_STORAGE } from '../constants/storage.constants';
 import socket from '../helpers/socket';
 import { SOCKET_EVENTS } from '../constants/socket.constants';
 import { AuthContextInterface } from '../contexts/auth.context';
-import { passwordReg } from '../constants/authorization.constants';
 import { UserInterface } from '../interfaces/user.interfaces';
 
 export const USER_DETAILS_INITIAL = {
@@ -18,8 +17,6 @@ const useAuth = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<UserInterface>(USER_DETAILS_INITIAL);
 
-  const isValidPassword = (password: string) => passwordReg.test(password);
-
   const handleLoginSuccess = (user: UserInterface): void => {
     setUserDetails(user);
     setIsAuth(true);
@@ -28,17 +25,15 @@ const useAuth = () => {
 
   const login: AuthContextInterface['login'] = useCallback(({ login, password }) => {
     setLoading(true);
-    if (isValidPassword(password)) {
-      const random = Math.random();
-      const hash = md5(md5(password + login) + random);
-      socket.emit(SOCKET_EVENTS.USER_LOGIN, { login, hash, random });
-      socket.once(SOCKET_EVENTS.USER_LOGIN, (data) => {
-        if (data) {
-          handleLoginSuccess(data);
-        }
-        setLoading(false);
-      });
-    }
+    const random = Math.random();
+    const hash = md5(md5(password + login) + random);
+    socket.emit(SOCKET_EVENTS.USER_LOGIN, { login, hash, random });
+    socket.once(SOCKET_EVENTS.USER_LOGIN, (data) => {
+      if (data) {
+        handleLoginSuccess(data);
+      }
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
@@ -69,18 +64,16 @@ const useAuth = () => {
 
   const registration: AuthContextInterface['registration'] = useCallback(({ login, password }) => {
     setLoading(true);
-    if (isValidPassword(password)) {
-      const hash = md5(password + login);
-      socket.emit(SOCKET_EVENTS.USER_SIGNUP, { login, hash })
-      socket.once(SOCKET_EVENTS.USER_SIGNUP, (data) => {
-        if (data) {
-          setUserDetails(data);
-          setIsAuth(true);
-          localStorage.setItem(TOKEN_STORAGE, data.token);
-        }
-        setLoading(false);
-      })
-    }
+    const hash = md5(password + login);
+    socket.emit(SOCKET_EVENTS.USER_SIGNUP, { login, hash })
+    socket.once(SOCKET_EVENTS.USER_SIGNUP, (data) => {
+      if (data) {
+        setUserDetails(data);
+        setIsAuth(true);
+        localStorage.setItem(TOKEN_STORAGE, data.token);
+      }
+      setLoading(false);
+    })
   }, []);
 
   return { isAuth, userDetails, loading, login, logout, registration };

@@ -5,8 +5,6 @@ import styled from 'styled-components';
 import Button from '../../components/button';
 import Input from '../../components/input';
 import Banner from '../../components/banner';
-import { passwordReg } from '../../constants/authorization.constants';
-import Tooltip from '../../components/tooltip';
 import { BASE_URL } from '../../constants/url.constants';
 
 const StyledForm = styled.form`
@@ -86,21 +84,18 @@ const Authorization = () => {
         autoFocus
         onChange={handleChange}
       />
-      <Tooltip content="Ваш пароль должен быть от 2 символов, содержащий минимум 1 цифру и букву">
-        <StyledInput
-          id="password"
-          type="password"
-          placeholder="Пароль"
-          name="password"
-          aria-label="password"
-          aria-describedby="password"
-          required
-          autoComplete="current-password"
-          onChange={handleChange}
-          pattern={`${passwordReg}`}
-          onFocus={(event) => event.target.select()}
-        />
-      </Tooltip>
+      <StyledInput
+        id="password"
+        type="password"
+        placeholder="Пароль"
+        name="password"
+        aria-label="password"
+        aria-describedby="password"
+        required
+        autoComplete="current-password"
+        onChange={handleChange}
+        onFocus={(event) => event.target.select()}
+      />
       <StyledControlButtons>
         <StyledAuthButton
           variant="secondary"

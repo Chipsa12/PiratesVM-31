@@ -80,13 +80,10 @@ class UserManager(BaseManager):
             userData = self.db.getUserByToken(token)
             userData['sid'] = sid
             self.users[userData['id']] = User(userData)
-            await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.mediator.get(self.TRIGGERS['UPDATE_TEAM_LIST'], True), room=sid)
+            await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True), room=sid)
             await self.sio.emit(self.MESSAGES['USER_SIGNUP'], self.users[userData['id']].getSelf(), room=sid)
             await self.getUsersOnline(sid)
             await self.sio.save_session(sid, {'username': self.users[userData['id']].getSelf()['name']})
-            session = await self.sio.get_session(sid)
-            if session:
-                print(session['username'])
             return
         await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
 
@@ -103,7 +100,7 @@ class UserManager(BaseManager):
                 userData['sid'] = sid
                 self.users[userData['id']] = User(userData)
                 #отправить пользователю список команд
-                await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.mediator.get(self.TRIGGERS['UPDATE_TEAM_LIST'], True), room=sid)
+                await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True), room=sid)
                 # добавляем пользователя в список пользователей онлайн
                 await self.sio.emit(self.MESSAGES['USER_LOGIN'], self.users[userData['id']].getSelf(), room=sid)
                 await self.getUsersOnline(sid)
@@ -132,5 +129,16 @@ class UserManager(BaseManager):
         await self.sio.emit(self.MESSAGES['USER_LOGOUT'], False, room=sid)
 
     async def autoLogin(self, sid, data):
-
-        await self.sio.emit(self.MESSAGES['AUTO_LOGIN'])
+        if 'token' in data:
+            user = self.db.getUserByToken(data['token'])
+            if user:
+                token = self.__generateToken(user['login'])
+                self.db.updateUserTokenById(id=user['id'], token=token)
+                user['sid'] = sid
+                user['token'] = token
+                self.users.update({user['id']: User(user)})
+                await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], dict(token=token), room=sid)
+                await self.getUsersOnline(sid)
+                return
+            await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], False, room=sid)
+        await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], False, room=sid)

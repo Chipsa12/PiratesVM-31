@@ -42,6 +42,7 @@ class ChatManager(BaseManager):
             if user:
                 room = ('room' in data and data['room']) or 'common'
                 self.db.insertMessage(data['message'], user['id'], room)
+        return None
 
     # отпрваить сообщение
     async def sendMessageInRoom(self, sid, data):
@@ -53,6 +54,7 @@ class ChatManager(BaseManager):
                                           room=roomId,))
             self.db.insertMessage(message.getSelf())
             await self.sio.emit(self.MESSAGES['SEND_MESSAGE_IN_ROOM'], message.get(), room=roomId)
+            return
         await self.sio.emit(self.MESSAGES['SEND_MESSAGE_IN_ROOM'], False, room=sid)
 
     async def sendMessage(self, sid, data):
@@ -60,6 +62,7 @@ class ChatManager(BaseManager):
         if user:
             message = Message(dict(name=user['name'],
                                           message=data['message']))
+            self.db.insertMessage(message.getSelf())
             await self.sio.emit(self.MESSAGES['SEND_MESSAGE'], message.get())
             return 
         await self.sio.emit(self.MESSAGES['SEND_MESSAGE'], False, room=sid)

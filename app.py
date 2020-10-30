@@ -1,8 +1,8 @@
 
-from time import gmtime, strftime,  localtime
 
 from aiohttp import web
 import socketio
+from pip._vendor import requests
 
 from settings import SETTINGS
 from application.modules.db.DB import DB

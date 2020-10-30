@@ -6,7 +6,6 @@ class ChatManager(BaseManager):
     def __init__(self, db, mediator, sio, MESSAGES, CHAT):
         super().__init__(db, mediator, sio, MESSAGES)
         self.__CHAT = CHAT
-        self.__message = Message
         # TODO
         # 1. ПРИДУМАТЬ ГДЕ ХРАНИТЬ КООРДИНАТЫ ЮЗЕРОВ!!!
         # (Когда измените место хранения коородинат исправте метод sendMessageToEchoChat)
@@ -49,9 +48,9 @@ class ChatManager(BaseManager):
         user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
         roomId = self.mediator.get(self.TRIGGERS['GET_ROOM_ID'], data)
         if user and roomId:
-            message = self.__message(dict(name=user['name'],
-                                       message=data['message'],
-                                       room=roomId,))
+            message = Message(dict(name=user['name'],
+                                          message=data['message'],
+                                          room=roomId,))
             self.db.insertMessage(message.getSelf())
             await self.sio.emit(self.MESSAGES['SEND_MESSAGE_IN_ROOM'], message.get(), room=roomId)
         await self.sio.emit(self.MESSAGES['SEND_MESSAGE_IN_ROOM'], False, room=sid)
@@ -59,14 +58,14 @@ class ChatManager(BaseManager):
     async def sendMessage(self, sid, data):
         user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
         if user:
-            message = self.__message(dict(name=user['name'],
+            message = Message(dict(name=user['name'],
                                           message=data['message']))
             await self.sio.emit(self.MESSAGES['SEND_MESSAGE'], message.get())
             return 
         await self.sio.emit(self.MESSAGES['SEND_MESSAGE'], False, room=sid)
 
     # отправить сообщение в echoChat
-    async def sendMessageToEchoChat(self, sid, data):
+    '''async def sendMessageToEchoChat(self, sid, data):
         room = self.__CHAT['ROOMS']['ECHO']
         senderToken = data['token']
         senderCoord = None
@@ -90,27 +89,4 @@ class ChatManager(BaseManager):
         await self.sio.emit('sendMessage', data, room)
         # удаляем всех подписчиков из комнаты
         for user in self.__usersSid:
-            self.unsubscribeRoom(user['sid'], room)
-
-    # добавить пользователя в список подключённых
-    '''def addUserOnline(self, data):
-        token, sid, coord = data.values()
-        if token and sid and coord:
-            self.__usersSid[token] = dict(sid=sid, coord=coord)
-            print(self.__usersSid)
-
-    # удалить пользователя из списка подключённых
-    def deleteUserOnline(self, data):
-        token = data['token']
-        if token:
-            for key in self.__usersSid:
-                if key == token:
-                    del self.__usersSid[token]
-                    
-    # подписаться на комнату
-    def subscribeRoom(self, sid, room):
-        self.sio.enter_room(sid, room)
-
-    # отписаться от комнаты
-    def unsubscribeRoom(self, sid, room):
-        self.sio.leave_room(sid, room)'''
+            self.unsubscribeRoom(user['sid'], room)'''

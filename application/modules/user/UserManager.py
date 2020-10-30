@@ -21,8 +21,6 @@ class UserManager(BaseManager):
         self.sio.on(self.MESSAGES['USERS_ONLINE'], self.getUsersOnline)
         self.sio.on('disconnect', self.logout)
 
-    # def __getUserByToken1(self, data):
-    #     return self.db.getUserByToken(data['token'])
 
 
     def __generateToken(self, login):
@@ -82,8 +80,13 @@ class UserManager(BaseManager):
             userData = self.db.getUserByToken(token)
             userData['sid'] = sid
             self.users[userData['id']] = User(userData)
+            await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.mediator.get(self.TRIGGERS['UPDATE_TEAM_LIST'], True), room=sid)
             await self.sio.emit(self.MESSAGES['USER_SIGNUP'], self.users[userData['id']].getSelf(), room=sid)
             await self.getUsersOnline(sid)
+            await self.sio.save_session(sid, {'username': self.users[userData['id']].getSelf()['name']})
+            session = await self.sio.get_session(sid)
+            if session:
+                print(session['username'])
             return
         await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
 
@@ -93,13 +96,14 @@ class UserManager(BaseManager):
         rnd = data['random']
         if login and hash and rnd:
             hashDB = self.db.getHashByLogin(login=login)
-            print(hashDB, self.__generateHash(hashDB, str(rnd)))
             if self.__generateHash(hashDB, str(rnd)) == hash:
                 token = self.__generateToken(login)
                 self.db.updateTokenByLogin(login, token)
                 userData = self.db.getUserByToken(token)
                 userData['sid'] = sid
                 self.users[userData['id']] = User(userData)
+                #отправить пользователю список команд
+                await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.mediator.get(self.TRIGGERS['UPDATE_TEAM_LIST'], True), room=sid)
                 # добавляем пользователя в список пользователей онлайн
                 await self.sio.emit(self.MESSAGES['USER_LOGIN'], self.users[userData['id']].getSelf(), room=sid)
                 await self.getUsersOnline(sid)
@@ -126,3 +130,7 @@ class UserManager(BaseManager):
             await self.getUsersOnline(sid)
             return
         await self.sio.emit(self.MESSAGES['USER_LOGOUT'], False, room=sid)
+
+    async def autoLogin(self, sid, data):
+
+        await self.sio.emit(self.MESSAGES['AUTO_LOGIN'])

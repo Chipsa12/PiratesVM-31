@@ -45,7 +45,6 @@ class Mediator:
     def call(self, name, data=None):
         if name:
             cb = self.events.get(name)
-            print(cb)
             if cb:
                 return cb(data)
         return None

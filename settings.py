@@ -2,7 +2,7 @@ SETTINGS = {
     'DB': {
         'NAME': 'vm31-db',
         'HOST': '127.0.0.1',
-        'PORT': '5433',
+        'PORT': '5432',
         'USER': 'vm31-user',
         'PASS': '12345678',
     },
@@ -24,7 +24,7 @@ SETTINGS = {
             'DELETE_USER_ONLINE': 'DELETE_USER_ONLINE',
             'UPDATE_TOKEN_BY_LOGIN': 'UPDATE_TOKEN_BY_LOGIN',
             'AUTH': 'AUTH',
-            'USER_LOGOUT': 'USER_LOGOUT'
+            'USER_LOGOUT': 'USER_LOGOUT',
         },
         'TRIGGERS': {
             'GET_ALL_USERS': 'GET_ALL_USERS',
@@ -35,10 +35,12 @@ SETTINGS = {
             'GET_TOKEN_BY_SID': 'GET_TOKEN_BY_SID',
             'GET_SID_BY_TOKEN': 'GET_SID_BY_TOKEN',
             'GET_ROOM_ID': 'GET_ROOM_ID',
-            'COUNT_DISTANCE': 'COUNT_DISTANCE'
+            'COUNT_DISTANCE': 'COUNT_DISTANCE',
+            'UPDATE_TEAM_LIST': 'UPDATE_TEAM_LIST'
         }
     },
     'MESSAGES': {
+        'USER_AUTOLOGIN': 'AUTH/USER_AUTOLOGIN',
         'USER_LOGIN': 'USER_LOGIN',
         'USER_LOGOUT': 'USER_LOGOUT',
         'USER_SIGNUP': 'USER_SIGNUP',
@@ -48,6 +50,8 @@ SETTINGS = {
         'SEND_MESSAGE_IN_ROOM': 'CHAT/SEND_MESSAGE_IN_ROOM',
         'SUBSCRIBE_ROOM': 'CHAT/SUBSCRIBE_ROOM',
         'UNSUBSCRIBE_ROOM': 'CHAT/UNSUBSCRIBE_ROOM',
+
+        'UPDATE_TEAM_LIST': 'LOBBY/UPDATE_TEAM_LIST',
 
         'CREATE_TEAM': 'LOBBY/CREATE_TEAM',
         'JOIN_TO_TEAM': 'LOBBY/JOIN_TO_TEAM',

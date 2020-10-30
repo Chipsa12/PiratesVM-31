@@ -11,4 +11,4 @@ class User:
         return dict(id=self.id, name=self.name)
 
     def getSelf(self):
-        return dict(id=self.id, name=self.name, token=self.token, coord=self.coord)
+        return dict(id=self.id, name=self.name, token=self.token)

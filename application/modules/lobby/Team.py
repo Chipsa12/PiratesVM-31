@@ -10,8 +10,9 @@ class Team:
 
     def get(self):
         players = []
-        for player in self.players:
-            players.append(player.get())
+        if len(self.players) != 0:
+            for player in self.players:
+                players.append(player.get())
         return dict(teamId=self.teamId,
                     name=self.name,
                     players=players,

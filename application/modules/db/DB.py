@@ -50,7 +50,7 @@ class DB:
                 port=db['PORT']
             )
             self.cursor = self.connect.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-            print('Я подключился!')
+            print('Я подключился к БД!')
         except ValueError as err:
             print('Всё сдохло!', err)
 
@@ -65,7 +65,7 @@ class DB:
     
     @toArrayOfDicts
     def getUsersOnline(self):
-        self.cursor.execute("SELECT id, name, login, token FROM users WHERE token != 'NULL' ")
+        self.cursor.execute("SELECT id, name, login, token FROM users WHERE token != '' ")
         return self.cursor.fetchall()
 
     @toDict
@@ -104,6 +104,13 @@ class DB:
         self.connect.commit()
         return True
 
+    def updateUserTokenById(self, id, token):
+        query = "UPDATE users SET token = %s WHERE id = %s "
+        self.cursor.execute(query, (token, id))
+        self.connect.commit()
+        return True
+
+
     @toDict
     def getAllTestResults(self):
         query = "SELECT id, name, result, date_time FROM tests ORDER BY date_time"
@@ -123,8 +130,8 @@ class DB:
         self.connect.commit()
         return True
 
-    def insertMessage(self, message, userId, room):
+    def insertMessage(self, data):
         query = 'INSERT INTO messages (message, "userId", room, time) VALUES (%s, %s, %s, now())'
-        self.cursor.execute(query, (message, userId, room))
+        self.cursor.execute(query, (data['message'], data['userId'], data['room']))
         self.connect.commit()
         return True

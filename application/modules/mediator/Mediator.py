@@ -26,7 +26,7 @@ class Mediator:
     def get(self, name, data=None):
         if name:
             cb = self.triggers.get(name)
-            if cb and cb(data):
+            if cb:
                 return cb(data)
         return None
 
@@ -44,7 +44,7 @@ class Mediator:
     # дернуть события (вызвать все колбеки, которые в него прописаны)
     def call(self, name, data=None):
         if name:
-            cbs = self.events.get(name)
-            if cbs:
-                return cbs(data)
+            cb = self.events.get(name)
+            if cb:
+                return cb(data)
         return None

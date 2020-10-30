@@ -9,11 +9,8 @@ class Router:
             ('*', '/', self.staticHandler)
         ]
         app.router.add_static('/js/', path=str('./public/'))
-
         for route in routes:
             app.router.add_route(route[0], route[1], route[2])
-
-        print('i am here in my heart')
 
     def testHandler(self, request):
         return self.web.json_response(dict(result='ПИТОНЯШКАААА!!!!!!!'))

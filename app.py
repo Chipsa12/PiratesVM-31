@@ -1,5 +1,8 @@
+
+
 from aiohttp import web
 import socketio
+from pip._vendor import requests
 
 from settings import SETTINGS
 from application.modules.db.DB import DB
@@ -29,5 +32,9 @@ LobbyManager(
     sio=sio,
     MESSAGES=SETTINGS['MESSAGES']
 )
+
+
+
+print('i am here in my heart')
 
 web.run_app(app, port=9000)

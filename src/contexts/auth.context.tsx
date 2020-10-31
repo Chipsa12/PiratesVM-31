@@ -4,7 +4,6 @@ import { UserInterface } from '../interfaces/user.interfaces';
 
 export interface AuthContextInterface {
   userDetails: UserInterface;
-  isAuth: boolean;
   loading: boolean;
   login: ({ login, password }: { login: string, password: string }) => void;
   logout: () => void;
@@ -13,7 +12,6 @@ export interface AuthContextInterface {
 
 const AuthContext = createContext<AuthContextInterface>({
   userDetails: USER_DETAILS_INITIAL,
-  isAuth: false,
   loading: false,
   login: (data) => {},
   logout: () => {},

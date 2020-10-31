@@ -10,16 +10,18 @@ export const USER_DETAILS_INITIAL = {
   id: 1,
   token: localStorage.getItem(TOKEN_STORAGE) || '',
   name: '',
+  isAuth: false,
 };
 
 const useAuth = () => {
-  const [isAuth, setIsAuth] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<UserInterface>(USER_DETAILS_INITIAL);
 
   const handleLoginSuccess = (user: UserInterface): void => {
-    setUserDetails(user);
-    setIsAuth(true);
+    setUserDetails({
+      ...user,
+      isAuth: true,
+    });
     localStorage.setItem(TOKEN_STORAGE, user.token);
   };
 
@@ -37,7 +39,7 @@ const useAuth = () => {
   }, []);
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!userDetails.isAuth) {
       setLoading(true);
       socket.emit(SOCKET_EVENTS.USER_AUTOLOGIN, { token: userDetails.token });
       socket.once(SOCKET_EVENTS.USER_AUTOLOGIN, (data) => {
@@ -54,13 +56,16 @@ const useAuth = () => {
     socket.emit(SOCKET_EVENTS.USER_LOGOUT, { token: userDetails.token });
     socket.once(SOCKET_EVENTS.USER_LOGOUT, (isLogout) => {
       if (isLogout) {
-        setUserDetails(USER_DETAILS_INITIAL);
-        setIsAuth(false);
+        setUserDetails({
+          ...USER_DETAILS_INITIAL,
+          token: '',
+          isAuth: false,
+        });
         localStorage.setItem(TOKEN_STORAGE, '');
       }
       setLoading(false);
     });
-  }, [userDetails.token]);
+  }, []);
 
   const registration: AuthContextInterface['registration'] = useCallback(({ login, password }) => {
     setLoading(true);
@@ -68,15 +73,13 @@ const useAuth = () => {
     socket.emit(SOCKET_EVENTS.USER_SIGNUP, { login, hash })
     socket.once(SOCKET_EVENTS.USER_SIGNUP, (data) => {
       if (data) {
-        setUserDetails(data);
-        setIsAuth(true);
-        localStorage.setItem(TOKEN_STORAGE, data.token);
+        handleLoginSuccess(data);
       }
       setLoading(false);
     })
   }, []);
 
-  return { isAuth, userDetails, loading, login, logout, registration };
+  return { userDetails, loading, login, logout, registration };
 };
 
 export default useAuth;

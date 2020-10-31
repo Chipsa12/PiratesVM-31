@@ -15,7 +15,7 @@ const AppRoute: React.FC<AppRouteProps & RouteProps> = ({
   isPrivate,
   ...rest
 }) => {
-  const { isAuth } = useContext(AuthContext);
+  const { userDetails: { isAuth } } = useContext(AuthContext);
 
   return (
     <Route

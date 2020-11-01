@@ -42,7 +42,7 @@ const StyledSignupButton = styled(Button)`
 `;
 
 const Authorization = () => {
-  const { loading, userDetails: { token }, login, registration } = useContext(AuthContext);
+  const { userDetails, login, registration } = useContext(AuthContext);
   const [form, setForm] = useState({ login: '', password: '' });
   const history = useHistory();
 
@@ -64,10 +64,10 @@ const Authorization = () => {
   }
 
   useEffect(() => {
-    if (!loading && token) {
+    if (userDetails.isAuth) {
       history.replace(BASE_URL);
     }
-  }, [loading, token, history]);
+  }, [userDetails.isAuth, history]);
 
   return (
     <StyledForm>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { StyledWrapper } from '../create-team/create-team';
+import { StyledWrapper } from '../../components/create-team/create-team';
 import { selectJoinedTeam } from '../../redux/selectors/team.selectors';
 import { JoinedTeamInterface } from '../../interfaces/team.interfaces';
 import Title from '../../components/title';

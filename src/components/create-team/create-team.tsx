@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import Input from '../../components/input';
+import Input from '../input';
 import socket from '../../helpers/socket';
 import { SOCKET_EVENTS } from '../../constants/socket.constants';
 import AuthContext from '../../contexts/auth.context';
-import Link from '../../components/link';
-import { LOBBY_URL, TEAM_ROOM_URL } from '../../constants/url.constants';
-import Title from '../../components/title';
+import Link from '../link';
+import { TEAM_ROOM_URL } from '../../constants/url.constants';
+import Title from '../title';
 import * as constants from '../../constants/team.constants';
 import { useDispatch } from 'react-redux';
 import { createTeam } from '../../redux/actions/team.actions';
@@ -132,7 +132,7 @@ const CreateTeam = (): React.ReactElement => {
           />
           <span>{form.minPlayers}</span>
         </StyledMinPlayersContainer>
-        <Link href={LOBBY_URL} active onClick={handleCreateTeam}>Создать</Link>
+        <Link href={TEAM_ROOM_URL} active onClick={handleCreateTeam}>Создать</Link>
       </StyledCreateTeam>
     </StyledWrapper>
   );

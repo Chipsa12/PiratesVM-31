@@ -1,6 +1,7 @@
 class Team:
     def __init__(self, data):
         self.teamId = data['teamId']
+        self.ownerName = data['ownerName']
         self.name = data['name']
         self.players = data['players']
         self.password = data['password']
@@ -14,6 +15,7 @@ class Team:
             for player in self.players:
                 players.append(player.get())
         return dict(teamId=self.teamId,
+                    ownerName=self.ownerName,
                     name=self.name,
                     players=players,
                     playersCount=len(self.players),

@@ -131,7 +131,7 @@ class DB:
         return True
 
     def insertMessage(self, data):
-        query = 'INSERT INTO messages (message, "userId", room, time) VALUES (%s, %s, %s, now())'
-        self.cursor.execute(query, (data['message'], data['userId'], data['room']))
+        query = 'INSERT INTO messages (message, name, room, time) VALUES (%s, %s, %s, now())'
+        self.cursor.execute(query, (data['message'], data['name'], data['room']))
         self.connect.commit()
         return True

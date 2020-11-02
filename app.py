@@ -13,7 +13,7 @@ from application.modules.lobby.LobbyManager import LobbyManager
 # audio ?
 # pirates
 from application.modules.game.Logic import Logic
-from application.router.Router import Router
+#from application.router.Router import Router
 from application.socket.Socket import Socket
 
 db = DB(SETTINGS['DB'])
@@ -22,7 +22,6 @@ mediator = Mediator(SETTINGS['MEDIATOR']['EVENTS'], SETTINGS['MEDIATOR']['TRIGGE
 sio = socketio.AsyncServer(cors_allowed_origins="*")
 app = web.Application()
 sio.attach(app)
-Router(app, web, mediator)
 Logic(mediator)
 
 UserManager(db, mediator, sio, SETTINGS['MESSAGES'])

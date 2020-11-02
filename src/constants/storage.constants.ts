@@ -1,1 +1,0 @@
-export const TOKEN_STORAGE = 'AUTH/TOKEN_STORAGE';

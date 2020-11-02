@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { JoinedTeamInterface } from '../../../interfaces/team.interfaces';
 import { StyledDetail, StyledDetailPlayers } from '../../../components/teams/team-details';
-import { MAX_TEAM_PLAYERS, MIN_TEAM_PLAYERS } from '../../../constants/team.constants';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -43,8 +42,8 @@ const TeamRoomSettings: React.FC<TeamRoomSettingsProps> = ({
       </StyledPasswordContainer>)}
     <StyledSettings>
       <StyledDetail>
-        <StyledDetailPlayers players={team.players.length} minPlayers={team.options?.minPlayers || MIN_TEAM_PLAYERS}>
-          {team.players.length}/{MAX_TEAM_PLAYERS}
+        <StyledDetailPlayers>
+          {team.players.length}/{team.maxPlayers}
         </StyledDetailPlayers>
       </StyledDetail>
       {team.options?.speed && (

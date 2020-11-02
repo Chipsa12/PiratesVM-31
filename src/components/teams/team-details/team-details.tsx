@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import Input from '../../input';
 import Button from '../../button';
-import { MAX_TEAM_PLAYERS, MIN_TEAM_PLAYERS } from '../../../constants/team.constants';
 import { joinTeam } from '../../../redux/actions/team.actions';
 import socket from '../../../helpers/socket';
 import { SOCKET_EVENTS } from '../../../constants/socket.constants';
@@ -46,12 +45,12 @@ export const StyledDetail = styled.div`
   align-items: center;
 `;
 
-export const StyledDetailPlayers = styled.span<{ players: number; minPlayers: number; }>`
+export const StyledDetailPlayers = styled.span`
   margin: 5px 0;
   display: flex;
   flex-flow: column;
   align-items: center;
-  color: ${props => props.players <= props.minPlayers ? props.theme.colors.reds[1] : props.theme.colors.greens[1]}
+  color: ${props => props.theme.colors.text}
 `;
 
 const StyledControls = styled.div`
@@ -108,13 +107,9 @@ const TeamDetails: React.FC<TeamDetailsProps> = ({
           </StyledDetail>
           <StyledDetail>
             Игроки:
-            <StyledDetailPlayers players={details.players} minPlayers={details.minPlayers || MIN_TEAM_PLAYERS}>
-              {details.players}/{MAX_TEAM_PLAYERS}
+            <StyledDetailPlayers>
+              {details.playersCount}/{details.maxPlayers}
             </StyledDetailPlayers>
-          </StyledDetail>
-          <StyledDetail>
-            Статус:
-            <span>{details?.isPlaying ? 'В игре' : 'Ожидание'}</span>
           </StyledDetail>
         </StyledDetails>
         <StyledControls>

@@ -37,7 +37,7 @@ const StyledTeams = styled.div`
 
 const Teams = (): React.ReactElement => {
   const teams = useSelector(selectAllTeams);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
+  const [selectedTeamId, setSelectedTeamId] = useState<number>(teams[0]?.teamId);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -54,9 +54,9 @@ const Teams = (): React.ReactElement => {
       <StyledTeamsContainer>
         <StyledTeams>
           <Scrollbar>
-            {Object.entries(teams).map(([key, { name, teamId }]) => (
+            {teams.map(({ name, teamId }) => (
               <Team
-                key={key}
+                key={teamId}
                 name={name}
                 isSelected={teamId === selectedTeamId}
                 onClick={() => setSelectedTeamId(teamId)}
@@ -64,7 +64,7 @@ const Teams = (): React.ReactElement => {
             ))}
           </Scrollbar>
         </StyledTeams>
-        <TeamDetails details={teams[selectedTeamId] ? teams[selectedTeamId] : null} />
+        <TeamDetails details={teams.find(({ teamId }) => teamId === selectedTeamId) || teams[0]} />
       </StyledTeamsContainer>
     </StyledWrapper>
   );

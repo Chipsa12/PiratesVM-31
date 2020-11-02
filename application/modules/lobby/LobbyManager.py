@@ -14,25 +14,27 @@ class LobbyManager(BaseManager):
 
         self.__teams[1] = Team(dict(
             teamId=1,
+            ownerName='1',
             name='QQWWE',
             password='12312',
             isPrivate=True,
             players=[
-                Player(dict(id=1, name='1231')),
-                Player(dict(id=2, name='1231', readyToStart=True))],
+                Player(dict(id=1, name='1')),
+                Player(dict(id=2, name='2', readyToStart=True))],
             minPlayers=3,
             roomId="323"
         ))
 
         self.__teams[2] = Team(dict(
             teamId=2,
+            ownerName='2',
             name='44343',
             password='123324312',
             isPrivate=True,
             players=[
-                Player(dict(id=2, name='1231')),
+                Player(dict(id=2, name='3')),
                 #Player(dict(id=10, name='mrlodard')),
-                Player(dict(id=3, name='1231', readyToStart=True))],
+                Player(dict(id=3, name='4', readyToStart=True))],
             minPlayers=3,
             roomId="333"
         ))
@@ -138,12 +140,19 @@ class LobbyManager(BaseManager):
                 return team
         return None
 
+    def __findTeamByName(self, name):
+        for key in self.__teams:
+            team = self.__teams[key]
+            if name == team.getSelf()['name']:
+                return team
+        return None
+
     def __getTeamList(self, data):
         if data:
             teams = []
             for key in self.__teams:
                 team = self.__teams[key].get()
-                del team['players']
+                #del team['players']
                 teams.append(team)
             return teams
         return None
@@ -155,7 +164,7 @@ class LobbyManager(BaseManager):
         teams = []
         for key in self.__teams:
             team = self.__teams[key].get()
-            del team['players']
+            #del team['players']
             teams.append(team)
         await self.sio.emit(self.MESSAGES['TEAM_LIST'], teams, room=sid)
         return
@@ -169,6 +178,7 @@ class LobbyManager(BaseManager):
             passwordTeam = common.generatePasswordForLobby()# генерируется из больших англ. букв длиной 7
             self.__teams[owner['id']] = Team(dict(
                                         teamId=owner['id'],
+                                        ownerName=owner['name'],
                                         name=data['name'],
                                         players=[Player(dict(id=owner['id'], name=owner['name']))],#преобразовать в JSON
                                         password=passwordTeam if data['isPrivate'] else '',
@@ -195,7 +205,7 @@ class LobbyManager(BaseManager):
         await self.sio.emit(self.MESSAGES['LEAVE_TEAM'], False, room=sid)
 
     async def readyToStart(self, sid, data):
-        user= self.__getUserByToken(data=data)
+        user = self.__getUserByToken(data=data)
         if user:
             team = self.__getTeamByUserId(userId=user['id']).getSelf()
             player = self.__findPlayerInTeam(userId=user['id'], team=team)
@@ -223,17 +233,27 @@ class LobbyManager(BaseManager):
     async def joinToTeam(self, sid, data):
         user = self.__getUserByToken(data=data)
         if user:
-            team = self.__findTeamByPassword(password=data['password'])
+            if data['isPrivate']:
+                team = self.__findTeamByPassword(password=data['password'])
+                if team:
+                    self.__deleteUserFromAllTeams(userId=user['id'], sid=sid)
+                    team.getSelf()['players'].append(Player(dict(id=user['id'],
+                                                                 name=user['name']
+                                                                 )))
+                    self.sio.enter_room(sid, team.getSelf()['roomId'])
+                    await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], team.get())
+                    await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], True, room=sid)
+                    return
+            team = self.__findTeamByName(name=data['name'])
             if team:
                 self.__deleteUserFromAllTeams(userId=user['id'], sid=sid)
                 team.getSelf()['players'].append(Player(dict(id=user['id'],
-                                                                  name=user['name']
-                                                                    )))
+                                                             name=user['name']
+                                                             )))
                 self.sio.enter_room(sid, team.getSelf()['roomId'])
                 await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], team.get())
                 await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], True, room=sid)
                 return
-            await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], False, room=sid)
         await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], False, room=sid)
 
     async def inviteToTeam(self, sid, data):
@@ -249,7 +269,8 @@ class LobbyManager(BaseManager):
                 if user:
                     team = self.__getTeamByUserId(userId=owner['id'])
                     team.getSelf()['players'].append(Player(dict(id=user['id'],
-                                                                        name=user['name'])))
+                                                                 name=user['name']
+                                                                 )))
                     await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], team.get())
                     await self.sio.emit(self.MESSAGES['INVITE_TO_TEAM'], True, room=sid)
                     return

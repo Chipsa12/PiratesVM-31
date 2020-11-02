@@ -16,6 +16,7 @@ class UserManager(BaseManager):
         self.mediator.set(self.TRIGGERS['GET_USER_BY_ID'], self.__getUserById)
         # регистрируем события
         self.sio.on(self.MESSAGES['USER_LOGIN'], self.auth)
+        self.sio.on(self.MESSAGES['USER_AUTOLOGIN'], self.autoLogin)
         self.sio.on(self.MESSAGES['USER_LOGOUT'], self.logout)
         self.sio.on(self.MESSAGES['USER_SIGNUP'], self.registration)
         self.sio.on(self.MESSAGES['USERS_ONLINE'], self.getUsersOnline)
@@ -99,10 +100,11 @@ class UserManager(BaseManager):
                 userData = self.db.getUserByToken(token)
                 userData['sid'] = sid
                 self.users[userData['id']] = User(userData)
-                #отправить пользователю список команд
-                await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True), room=sid)
                 # добавляем пользователя в список пользователей онлайн
                 await self.sio.emit(self.MESSAGES['USER_LOGIN'], self.users[userData['id']].getSelf(), room=sid)
+                # отправить пользователю список команд
+                await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True),
+                                    room=sid)
                 await self.getUsersOnline(sid)
                 return
         await self.sio.emit(self.MESSAGES['USER_LOGIN'], False, room=sid)
@@ -138,6 +140,8 @@ class UserManager(BaseManager):
                 user['token'] = token
                 self.users.update({user['id']: User(user)})
                 await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], dict(token=token), room=sid)
+                await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True),
+                                    room=sid)
                 await self.getUsersOnline(sid)
                 return
             await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], False, room=sid)

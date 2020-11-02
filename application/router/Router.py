@@ -1,4 +1,4 @@
-class Router:
+'''class Router:
     def __init__(self, app, web, mediator):
         self.web = web
         self.mediator = mediator
@@ -20,4 +20,4 @@ class Router:
         return self.web.json_response(dict(result=float(value) ** 2))
 
     def staticHandler(self, request):
-        return self.web.FileResponse('./public/index.html')
+        return self.web.FileResponse('./public/index.html')'''

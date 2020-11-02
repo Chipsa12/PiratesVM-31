@@ -8,4 +8,4 @@ class Message:
         return dict(name=self.name, message=self.message)
 
     def getSelf(self):
-        return dict(userId=self.userId, message=self.message, room=self.room)
+        return dict(name=self.name, message=self.message, room=self.room)

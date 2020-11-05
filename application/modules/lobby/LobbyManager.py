@@ -118,12 +118,12 @@ class LobbyManager(BaseManager):
         return False
 
     def __checkTeamIsReady(self, team):
-        minPlayers = 0
+        countPlayers = 0
         players = team['players']
         for player in players:
             if player.get()['readyToStart']:
-                minPlayers += 1
-                if minPlayers >= team['minPlayers']:
+                countPlayers += 1
+                if countPlayers >= (team['maxPlayers'] / 2) and countPlayers <= team['maxPlayers']:
                     return True
         return False
 
@@ -138,13 +138,6 @@ class LobbyManager(BaseManager):
         for key in self.__teams:
             team = self.__teams[key]
             if password == team.getSelf()['password']:
-                return team
-        return None
-
-    def __findTeamByName(self, name):
-        for key in self.__teams:
-            team = self.__teams[key]
-            if name == team.getSelf()['name']:
                 return team
         return None
 
@@ -188,7 +181,7 @@ class LobbyManager(BaseManager):
                                         players=[Player(dict(id=owner['id'], name=owner['name']))],#преобразовать в JSON
                                         password=passwordTeam if data['isPrivate'] else '',
                                         isPrivate=data['isPrivate'],
-                                        minPlayers=data['minPlayers'],
+                                        maxPlayers=data['maxPlayers'] if 'maxPlayers' in data else 10,
                                         roomId=roomId
                                         ))
             self.sio.enter_room(sid, roomId)

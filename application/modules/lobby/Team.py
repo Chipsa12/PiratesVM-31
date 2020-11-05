@@ -6,7 +6,7 @@ class Team:
         self.players = data['players']
         self.password = data['password']
         self.isPrivate = data['isPrivate']
-        self.minPlayers = data['minPlayers']
+        self.maxPlayers = data['maxPlayers']
         self.roomId = data['roomId']
 
     def get(self):
@@ -29,6 +29,6 @@ class Team:
                     players=self.players,
                     password=self.password,
                     isPrivate= self.isPrivate,
-                    minPlayers=self.minPlayers,
+                    maxPlayers=self.maxPlayers,
                     roomId=self.roomId
                     )

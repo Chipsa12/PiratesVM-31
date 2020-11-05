@@ -27,6 +27,7 @@ class Team:
         return dict(teamId=self.teamId,
                     name=self.name,
                     players=self.players,
+                    playersCount=len(self.players),
                     password=self.password,
                     isPrivate= self.isPrivate,
                     maxPlayers=self.maxPlayers,

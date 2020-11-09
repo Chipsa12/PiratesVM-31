@@ -86,6 +86,12 @@ class DB:
         self.cursor.execute(query, [token])
         return self.cursor.fetchone()
 
+    @toDict
+    def getFurnitureByName(self, name):
+        query = "SELECT id, name, chance_of_breakdown, durability, time_to_do_task FROM furniture WHERE name = %s"
+        self.cursor.execute(query, [name])
+        return self.cursor.fetchone()
+
     def insertUser(self, name, login, password, token=None):
         query = "INSERT INTO users (name, login, password, token) VALUES (%s, %s, %s, %s)"
         self.cursor.execute(query, (name, login, password, token))

@@ -20,7 +20,7 @@ class Game:
             return self.__ships
         return None
 
-    def deletedShip(self, data):
+    def deleteShip(self, data):
         if data:
             for key in self.__ships:
                 if key == data['id']:
@@ -36,3 +36,13 @@ class Game:
                     if player.getSelf()['id'] == data['id']:
                         return self.__ships[key]
         return None
+
+    def deletePlayer(self, data):
+        if data:
+            team = self.__ships[data['shipId']].get()['team'].getSelf()
+            if team:
+                for player in team['players']:
+                    if player.getSelf()['id'] == data['playerId']:
+                        team['players'].remove(player)
+                        return player
+        return None, None

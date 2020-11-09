@@ -26,7 +26,7 @@ const ScrollHost = styled.div`
 
 const StyledScrollBar = styled.div`
   position: absolute;
-  right: -8px;
+  right: 2px;
   top: 0;
   bottom: 0;
   width: ${({ theme: { scrollbar } }) => scrollbar.width};

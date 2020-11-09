@@ -7,7 +7,6 @@ import { MessagesInterface } from '../../interfaces/chat.interfaces';
 const StyledMessages = styled.div`
   display: flex;
   flex-flow: column;
-  background: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.text};
   width: 100%;
   height: 100%;

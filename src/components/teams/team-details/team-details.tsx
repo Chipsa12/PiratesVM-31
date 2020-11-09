@@ -12,24 +12,35 @@ import { TeamListInterface } from '../../../interfaces/team.interfaces';
 import { TEAM_ROOM_URL } from '../../../constants/url.constants';
 
 const StyledWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-flow: column;
-  justify-content: space-around;
+  justify-content: start;
+  align-items: center;
   flex-basis: 100%;
   width: 100%;
-  border: 1px solid ${({ theme: { colors }}) => colors.text};
-  color: ${({ theme: { colors }}) => colors.text};
+  
+  color: ${({ theme: { colors }}) => colors.light};
   font-size: ${(props) => props.theme.fontSizes[1]};
   text-transform: uppercase;
 `;
 
 const StyledTeamDetails = styled.div`
   padding: 10px 30px;
+  margin: 0 10px 10px 0;
   height: 100%;
   display: flex;
   flex-flow: column;
   align-items: center;
   justify-content: space-between;
+  border: 1px solid ${({ theme: { colors }}) => colors.text};
+`;
+
+const StyledHeader = styled.div`
+  margin: 10px 10px 5px;
+  font-size: ${(props) => props.theme.fontSizes[1]};
+  color: ${(props) => props.theme.colors.light};
+  text-transform: uppercase;
 `;
 
 const StyledDetails = styled.div`
@@ -45,12 +56,16 @@ export const StyledDetail = styled.div`
   align-items: center;
 `;
 
+export const StyledTitle = styled.span`
+  color: ${props => props.theme.colors.greys[0]}
+`;
+
 export const StyledDetailPlayers = styled.span`
   margin: 5px 0;
   display: flex;
   flex-flow: column;
   align-items: center;
-  color: ${props => props.theme.colors.text}
+  color: ${props => props.theme.colors.light}
 `;
 
 const StyledControls = styled.div`
@@ -59,10 +74,20 @@ const StyledControls = styled.div`
 
 const StyledInput = styled(Input)`
   text-align: center;
+  height: 40px;
+
+  &::placeholder {
+    font-size: ${props => props.theme.fontSizes[1]};
+  }
 `;
 
 const StyledButton = styled(Button)`
   width: 100%;
+  height: 40px;
+  font-size: ${props => props.theme.fontSizes[1]};
+  box-shadow: 0 4px 0 ${props => props.theme.colors.blacks[0]};
+  background: ${props => props.theme.colors.text};
+  color: ${props => props.theme.colors.primary};
 `;
 
 export interface TeamDetailsProps {
@@ -97,16 +122,18 @@ const TeamDetails: React.FC<TeamDetailsProps> = ({
 
   return (
     <StyledWrapper>
+      <StyledHeader>Описание</StyledHeader>
       {details &&
       <StyledTeamDetails>
         <StyledDetails>
+          <StyledTitle>Комната:</StyledTitle>
           <p>{details.name}</p>
           <StyledDetail>
-            Организатор:
+            <StyledTitle>Организатор:</StyledTitle>
             <span>{details.ownerName}</span>
           </StyledDetail>
           <StyledDetail>
-            Игроки:
+          <StyledTitle>Игроки:</StyledTitle>
             <StyledDetailPlayers>
               {details.playersCount}/{details.maxPlayers}
             </StyledDetailPlayers>
@@ -116,7 +143,6 @@ const TeamDetails: React.FC<TeamDetailsProps> = ({
           {details.isPrivate && (
             <StyledInput
               id="team-code"
-              label="Пароль"
               placeholder="Пароль"
               value={password}
               onChange={handlePasswordChange}

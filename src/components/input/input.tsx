@@ -24,7 +24,7 @@ const StyledInput = styled.input`
   &::placeholder {
     text-transform: uppercase;
     font-size: 2rem;
-    color: ${({ theme }) => theme.colors.text};
+    color: ${({ theme }) => theme.colors.whites[1]};
   }
   
   &:-webkit-autofill,

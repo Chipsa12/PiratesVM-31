@@ -63,9 +63,7 @@ const StyledInput = styled(Input)`
   padding-left: 46px;
   
   &::placeholder {
-    color: ${props => props.theme.colors.whites[1]};
     font-size: ${props => props.theme.fontSizes[0]};
-    
   }
 `;
 

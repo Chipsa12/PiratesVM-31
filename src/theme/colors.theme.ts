@@ -11,5 +11,6 @@ export const colors = {
   blues: ['#4A90E2'],
   blacks: ['#000', 'rgba(0, 0, 0, 0.5)'],
   whites: ['#fff', 'rgba(255, 255, 255, 0.5)'],
+  greys: ['#BDB397'],
   transparent: 'transparent',
 };

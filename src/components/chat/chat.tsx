@@ -12,23 +12,61 @@ import { SOCKET_EVENTS } from '../../constants/socket.constants';
 import { eventTypes } from '../../constants/event-types';
 import { MAX_CHAT_INPUT_LENGTH } from '../../constants/chat.constants';
 import { MessageInterface } from '../../interfaces/chat.interfaces';
+import OnlineUsers from '../online-users/online-users';
+
+const Container = styled.div`
+  margin: 20px 30px;
+  width: 733px;
+  height: 100%;
+  max-height: 300px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
 
 const StyledChat = styled.div`
-  padding: 20px 10px;
-  width: 100%;
+  width: 540px;
   height: 100%;
-  max-width: 700px;
-  max-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-flow: column;
   font-size: ${props => props.theme.fontSizes[1]};
+  background: ${(({ theme }) => theme.colors.secondary)};
+  border: 1px solid ${({ theme: { colors }}) => colors.text};
+`;
+
+const ChatHeader = styled.div`
+  width: 100%;
+  height: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  border-bottom: 1px solid ${({ theme: { colors }}) => colors.text};
+`;
+
+const ChatRoomTab = styled.div`
+  color: ${props => props.theme.colors.secondary};
+  background-color: ${props => props.theme.colors.text};
+  font-size: ${props => props.theme.fontSizes[0]};
+  border-radius: 8px;
+  padding: 2px 4px;
+  margin: 0 10px;
 `;
 
 const StyledMessageInput = styled.div`
   width: 100%;
   display: flex;
+  border-top: 1px solid ${({ theme: { colors }}) => colors.text};
+`;
+
+const StyledButton = styled(Button)`
+  background: none;
+  color: ${props => props.theme.colors.text};
+
+  &:focus {
+    border: none;
+  }
 `;
 
 const Chat = () => {
@@ -62,21 +100,27 @@ const Chat = () => {
   };
 
   return (
-    <StyledChat>
-      <Messages messages={messages} />
-      <StyledMessageInput>
-        <Textarea
-          id="send-message"
-          name="message"
-          value={message}
-          onKeyUp={handleMessageKeyUp}
-          onChange={handleInputChange}
-          maxLength={MAX_CHAT_INPUT_LENGTH}
-          placeholder="Введите сообщение"
-        />
-        <Button onClick={handleSendMessage}>{'>'}</Button>
-      </StyledMessageInput>
-    </StyledChat>
+    <Container>
+      <StyledChat>
+        <ChatHeader>
+          <ChatRoomTab>Общий</ChatRoomTab>
+        </ChatHeader>
+        <Messages messages={messages} />
+        <StyledMessageInput>
+          <Textarea
+            id="send-message"
+            name="message"
+            value={message}
+            onKeyUp={handleMessageKeyUp}
+            onChange={handleInputChange}
+            maxLength={MAX_CHAT_INPUT_LENGTH}
+            placeholder="Введите сообщение"
+          />
+          <StyledButton onClick={handleSendMessage}>{'>'}</StyledButton>
+        </StyledMessageInput>
+      </StyledChat>
+      <OnlineUsers></OnlineUsers>
+    </Container>
   );
 };
 

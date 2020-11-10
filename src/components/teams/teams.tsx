@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Modal from 'react-modal';
 import styled from 'styled-components';
 import Scrollbar from '../scrollbar';
 import Team from './team';
@@ -9,6 +10,7 @@ import { addTeams } from '../../redux/actions/team.actions';
 import socket from '../../helpers/socket';
 import Button from '../button/button';
 import { SOCKET_EVENTS } from '../../constants/socket.constants';
+import CreateTeam from '../create-team';
 
 const StyledWrapper = styled.div`
   margin: 20px 30px;
@@ -61,6 +63,7 @@ const StyledButton = styled(Button)`
 const Teams = (): React.ReactElement => {
   const teams = useSelector(selectAllTeams);
   const [selectedTeamId, setSelectedTeamId] = useState<number>(teams[0]?.teamId);
+  const [modalIsOpen,setIsOpen] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -71,13 +74,17 @@ const Teams = (): React.ReactElement => {
     };
   }, [dispatch]);
 
+  const handleCreateRoom = (): void => {
+    setIsOpen(true)
+  }
+
   return (
     <StyledWrapper>
       <StyledTeamsContainer>
         <StyledTeams>
           <TeamsHeader>
             <StyledTitle>Комнаты</StyledTitle>
-            <StyledButton>Создать</StyledButton>
+            <StyledButton onClick={(handleCreateRoom)}>Создать</StyledButton>
           </TeamsHeader>
           <Scrollbar>
             {teams.map(({ name, teamId }) => (
@@ -92,6 +99,7 @@ const Teams = (): React.ReactElement => {
         </StyledTeams>
         <TeamDetails details={teams.find(({ teamId }) => teamId === selectedTeamId) || teams[0]} />
       </StyledTeamsContainer>
+      <CreateTeam modalIsOpen={modalIsOpen} setIsOpen={setIsOpen}/>
     </StyledWrapper>
   );
 };

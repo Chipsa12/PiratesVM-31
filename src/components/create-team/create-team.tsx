@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import Modal from 'react-modal';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import Input from '../input';
@@ -11,37 +12,64 @@ import Title from '../title';
 import * as constants from '../../constants/team.constants';
 import { useDispatch } from 'react-redux';
 import { createTeam } from '../../redux/actions/team.actions';
+import Button from '../button';
+import BackSVG from '../../icons/backSVG';
 
 export const StyledWrapper = styled.div`
-  padding: 2px 4px;
   display: flex;
   flex-flow: column;
   align-items: center;
   max-width: 494px;
   width: 100%;
-  background: ${({ theme: { colors }}) => colors.primary};
   user-select: none;
 `;
 
+const Header = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(#0D2B29, #0C3632);  
+  height: 60px;
+`;
+
+const StyledButton = styled(Button)`
+  position: absolute;
+  left: 0;
+  background: none;
+
+  &:focus {
+    border: none;
+  }
+  &:hover {
+    background: none;
+  }
+`;
+
 const StyledCreateTeam = styled.div`
-  padding: 32px 18px 58px;
   display: flex;
   flex-flow: column;
   align-items: center;
   font-size: ${props => props.theme.fontSizes[3]};
-`;
-
-const StyledRoomName = styled(Input)`
-  text-align: center;
+  background: linear-gradient(#13544E, #168A80);
   width: 100%;
 `;
 
+const StyledRoomName = styled(Input)`
+  margin-top: 20px;
+  text-align: center;
+  width: 80%;
+  height: 50px;
+`;
+
 const StyledTeamPrivateContainer = styled.div`
-  display: inline-flex;
+  display: flex;
   justify-content: center;
   align-items: center;
-  flex-flow: row-reverse;
   padding: 10px;
+  width: 100%;
 `;
 
 const StyledMinPlayersContainer = styled.div`
@@ -50,13 +78,46 @@ const StyledMinPlayersContainer = styled.div`
   justify-content: center;
 `;
 
+const StyledLink = styled(Link)`
+  width: 80%;
+  height: 50px;
+`;
+
+const InputWrapper = styled.div`
+  margin: 10px;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(#10685B, #0E4A46); 
+  width: 100%;
+`;
+
 interface CreateTeamFormInterface {
   name: string;
   isPrivate: boolean;
   minPlayers: number;
 }
 
-const CreateTeam = (): React.ReactElement => {
+const modalStyles = {
+  content: {
+    position: 'relative',
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    background: 'none',
+    inset: 0,
+    border: 'none',
+  }
+};
+
+const CreateTeam = ({
+  modalIsOpen, setIsOpen
+}): React.ReactElement => {
   const dispatch = useDispatch();
   const { userDetails: { token } } = useContext(AuthContext);
   const history = useHistory();
@@ -99,42 +160,54 @@ const CreateTeam = (): React.ReactElement => {
     });
   };
 
+  const handleBackButton = (): void => {
+    setIsOpen(false);
+  }
+
   return (
-    <StyledWrapper>
-      <Title title="Создать игру" />
-      <StyledCreateTeam>
-        <StyledRoomName
-          id="room-name"
-          placeholder="Название комнаты"
-          autoFocus
-          autoComplete="off"
-          onChange={handleRoomNameChange}
-          maxLength={constants.MAX_ROOM_NAME_LENGTH}
-        />
-        <StyledTeamPrivateContainer>
-          <Input
-            id="room-private"
-            name="isPrivate"
-            type="checkbox"
-            label="Приватная игра"
-            onChange={handlePrivateGameChange}
+    <Modal isOpen={modalIsOpen} style={modalStyles}>
+      <StyledWrapper>
+        <Header>
+          <StyledButton onClick={handleBackButton}><BackSVG/></StyledButton>
+          <Title title="Создать игру" />
+        </Header>
+        <StyledCreateTeam>
+          <StyledRoomName
+            id="room-name"
+            placeholder="Название комнаты"
+            autoFocus
+            autoComplete="off"
+            onChange={handleRoomNameChange}
+            maxLength={constants.MAX_ROOM_NAME_LENGTH}
           />
-        </StyledTeamPrivateContainer>
-        <StyledMinPlayersContainer>
-          <Input
-            id="room-min-players"
-            type="range"
-            label="Мин. игроков"
-            min={constants.MIN_TEAM_PLAYERS}
-            max={constants.MAX_TEAM_PLAYERS}
-            value={form.minPlayers}
-            onChange={handleMinPlayersChange}
-          />
-          <span>{form.minPlayers}</span>
-        </StyledMinPlayersContainer>
-        <Link href={TEAM_ROOM_URL} active onClick={handleCreateTeam}>Создать</Link>
-      </StyledCreateTeam>
-    </StyledWrapper>
+          <StyledTeamPrivateContainer>
+            <InputWrapper>
+              <Input
+                id="room-private"
+                name="isPrivate"
+                type="checkbox"
+                onChange={handlePrivateGameChange}
+              /> 
+            </InputWrapper>
+            <Title title={'Приватная игра'}/>
+          </StyledTeamPrivateContainer>
+          <StyledMinPlayersContainer>
+            <Input
+              id="room-min-players"
+              type="range"
+              min={constants.MIN_TEAM_PLAYERS}
+              max={constants.MAX_TEAM_PLAYERS}
+              value={form.minPlayers}
+              onChange={handleMinPlayersChange}
+            />
+            <span>{form.minPlayers}</span>
+          </StyledMinPlayersContainer>
+        </StyledCreateTeam>
+        <Footer>
+          <StyledLink href={TEAM_ROOM_URL} active onClick={handleCreateTeam}>Создать</StyledLink>
+        </Footer>
+      </StyledWrapper>
+    </Modal>
   );
 };
 

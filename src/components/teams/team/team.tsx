@@ -57,7 +57,7 @@ const Team: React.FC<TeamProps> = ({
     </StyledTeamName>
     <TeamInfo>
       {
-        true && isSelected ? <PrivateIconSelected/> : <PrivateIconUnSelected/>
+        isPrivate && (isSelected ? <PrivateIconSelected/> : <PrivateIconUnSelected/>)
       }
       0/0
     </TeamInfo>

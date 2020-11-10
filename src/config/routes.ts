@@ -4,6 +4,7 @@ import Lobby from '../pages/lobby';
 import TeamRoom from '../pages/team-room';
 import Authorization from '../pages/authorization';
 import React from 'react';
+import Game from '../pages/game/game';
 
 export interface RouteInterface extends RouteProps {
   path: string;
@@ -20,6 +21,11 @@ export const routes: RouteInterface[] = [
   {
     path: URLS.BASE_URL,
     component: Lobby,
+    isPrivate: true,
+  },
+  {
+    path: URLS.GAME_URL,
+    component: Game,
     isPrivate: true,
   },
   {

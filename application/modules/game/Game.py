@@ -28,7 +28,7 @@ class Game:
                     return True
         return None
 
-    def getShip(self, data):
+    def getShipByUserId(self, data):
         if data:
             for key in self.__ships:
                 team = self.__ships[key]['team'].getSelf()
@@ -46,3 +46,5 @@ class Game:
                         team['players'].remove(player)
                         return player
         return None, None
+
+

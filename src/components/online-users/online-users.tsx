@@ -90,7 +90,7 @@ const OnlineUsers = () => {
           <StyledUl>
             {
               onlineUsers.map((user: User) => {
-                return <StyledLi>
+                return <StyledLi key={user.id}>
                   <StyledUser>
                     {user.name}
                   </StyledUser>

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import styled from 'styled-components';
 import Chat from '../../components/chat';
 import Title from '../../components/title';
 import Teams from '../../components/teams';
 import CloseSVG from '../../icons/closeSVG';
+import AuthContext from '../../contexts/auth.context';
+import Button from '../../components/button';
 
 const Container = styled.div`
   display: flex;
@@ -44,20 +46,26 @@ const Content = styled.div`
   background: linear-gradient(#13514D, #156F68, #13514D);
 `;
 
-const Lobby = () => (
-  <Container>
-    <Header>
-      <HeaderLeft>
-        <CloseSVG/>
-        <Text>Masha</Text>
-      </HeaderLeft>
-      <Title title="Найти игру"/>
-    </Header>
-    <Content>
-      <Teams />
-      <Chat/>
-    </Content>
-  </Container>
-);
+const Lobby = () => { 
+  const { logout } = useContext(AuthContext); 
+
+  return (
+    <Container>
+      <Header>
+        <HeaderLeft>
+          <Button onClick={logout}>
+            <CloseSVG/>
+          </Button>
+          <Text>Masha</Text>
+        </HeaderLeft>
+        <Title title="Найти игру"/>
+      </Header>
+      <Content>
+        <Teams />
+        <Chat/>
+      </Content>
+    </Container>
+  )
+};
 
 export default Lobby;

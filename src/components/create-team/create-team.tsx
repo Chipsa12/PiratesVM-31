@@ -43,6 +43,7 @@ const StyledButton = styled(Button)`
   &:focus {
     border: none;
   }
+  
   &:hover {
     background: none;
   }

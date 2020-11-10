@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 import Scrollbar from '../scrollbar';
@@ -11,6 +11,7 @@ import socket from '../../helpers/socket';
 import Button from '../button/button';
 import { SOCKET_EVENTS } from '../../constants/socket.constants';
 import CreateTeam from '../create-team';
+import AuthContext from '../../contexts/auth.context';
 
 const StyledWrapper = styled.div`
   margin: 20px 30px;
@@ -65,6 +66,7 @@ const Teams = (): React.ReactElement => {
   const [selectedTeamId, setSelectedTeamId] = useState<number>(teams[0]?.teamId);
   const [modalIsOpen,setIsOpen] = useState(false);
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     const getTeams = (newTeams): any => dispatch(addTeams(newTeams));

@@ -25,6 +25,7 @@ SETTINGS = {
             'UPDATE_TOKEN_BY_LOGIN': 'UPDATE_TOKEN_BY_LOGIN',
             'AUTH': 'AUTH',
             'USER_LOGOUT': 'USER_LOGOUT',
+            'START_GAME': 'START_GAME'
         },
         'TRIGGERS': {
             'GET_ALL_USERS': 'GET_ALL_USERS',
@@ -62,6 +63,8 @@ SETTINGS = {
         'INVITE_TO_TEAM': 'LOBBY/INVITE_TO_TEAM',
 
 
-        'LEAVE_SHIP': 'GAME/LEAVE_SHIP'
+        'LEAVE_SHIP': 'GAME/LEAVE_SHIP',
+        'START_GAME': 'GAME/START_GAME',
+        'END_GAME': 'GAME/END_GAME',
     },
 }

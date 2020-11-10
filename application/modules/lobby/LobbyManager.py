@@ -113,8 +113,8 @@ class LobbyManager(BaseManager):
     def __findPlayerInTeam(self, userId, team):
         players = team.getSelf()['players']
         for player in players:
-            if player.get()['id'] == userId:
-                return player.get()
+            if player.getSelf()['id'] == userId:
+                return player.getSelf()
         return False
 
     def __checkTeamIsReady(self, team):
@@ -212,7 +212,12 @@ class LobbyManager(BaseManager):
                 if self.__checkTeamIsReady(team=team):
                     await self.sio.emit(self.MESSAGES['READY_TO_START'], True, room=team['roomId'])
                     #начать игру...
+                    if self.mediator.call(self.EVENTS['START_GAME'], dict(team=team, owner=owner, sid=sid)):
+                        del self.__teams[team['id']]
+                        await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.__teams)
+                        return
         await self.sio.emit(self.MESSAGES['READY_TO_START'], False, room=sid)
+        return False
 
     async def kickFromTeam(self, sid, data):
         owner = self.__getUserByToken(data=data)

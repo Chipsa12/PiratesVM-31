@@ -17,7 +17,7 @@ class Game:
                 anchor=data['anchor']
             ))
             self.__ships[data['id']] = ship
-            return self.__ships
+            return ship
         return None
 
     def deleteShip(self, data):
@@ -45,6 +45,15 @@ class Game:
                     if player.getSelf()['id'] == data['playerId']:
                         team['players'].remove(player)
                         return player
+        return None, None
+
+    def deletePlayers(self, data):
+        if data:
+            team = self.__ships[data['shipId']].get()['team'].getSelf()
+            if team:
+                for player in team['players']:
+                    team['players'].remove(player)
+                return True
         return None, None
 
 

@@ -41,6 +41,7 @@ class LobbyManager(BaseManager):
         #TRIGGERS
         self.mediator.set(self.TRIGGERS['GET_ROOM_ID'], self.__getRoomId)
         self.mediator.set(self.TRIGGERS['TEAM_LIST'], self.__getTeamList)
+        self.mediator.set(self.TRIGGERS['REMOVE_TEAM'], self.__removeTeam)
         #EVENTS
         # Если чел дисконектнулся, тогда вызывать leaveTeam и вызывать событие logout
         self.mediator.subscribe(self.EVENTS['USER_LOGOUT'], self.__disconnect)
@@ -158,6 +159,16 @@ class LobbyManager(BaseManager):
             return teams
         return None
 
+    def __removeTeam(self, team):
+        if team:
+            for player in team['players'].getSelf():
+                user = self.mediator.get(self.TRIGGERS['GET_USER_BY_ID'], dict(id=player['id']))
+                team['players'].remove(player)
+                self.sio.leave_room(user['sid'], team['roomId'])
+                if len(team['players']) == 0:
+                    del self.__teams[team['id']]
+            return True
+        return False
 
     async def updateTeamList(self, sid, data):
         teams = []
@@ -212,10 +223,8 @@ class LobbyManager(BaseManager):
                 if self.__checkTeamIsReady(team=team):
                     await self.sio.emit(self.MESSAGES['READY_TO_START'], True, room=team['roomId'])
                     #начать игру...
-                    if self.mediator.call(self.EVENTS['START_GAME'], dict(team=team, owner=owner, sid=sid)):
-                        del self.__teams[team['id']]
-                        await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.__teams)
-                        return
+                    self.mediator.call(self.EVENTS['START_GAME'], dict(team=team, owner=owner, sid=sid))
+                    return
         await self.sio.emit(self.MESSAGES['READY_TO_START'], False, room=sid)
         return False
 

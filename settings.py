@@ -37,7 +37,8 @@ SETTINGS = {
             'GET_SID_BY_TOKEN': 'GET_SID_BY_TOKEN',
             'GET_ROOM_ID': 'GET_ROOM_ID',
             'COUNT_DISTANCE': 'COUNT_DISTANCE',
-            'TEAM_LIST': 'TEAM_LIST'
+            'TEAM_LIST': 'TEAM_LIST',
+            'REMOVE_TEAM': 'REMOVE_TEAM'
         }
     },
     'MESSAGES': {

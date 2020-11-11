@@ -20,40 +20,46 @@ class Game:
             return ship
         return None
 
-    def deleteShip(self, data):
-        if data:
+    def deleteShip(self, shipId):
+        if shipId:
             for key in self.__ships:
-                if key == data['id']:
+                if key == shipId:
                     del self.__ships[key]
                     return True
         return None
 
-    def getShipByUserId(self, data):
-        if data:
+    def getShipByUserId(self, userId):
+        if userId:
             for key in self.__ships:
                 team = self.__ships[key]['team'].getSelf()
                 for player in team['players']:
-                    if player.getSelf()['id'] == data['id']:
+                    if player.getSelf()['id'] == userId:
                         return self.__ships[key]
         return None
 
-    def deletePlayer(self, data):
-        if data:
-            team = self.__ships[data['shipId']].get()['team'].getSelf()
+    def deletePlayer(self, userId, shipId):
+        if userId and shipId:
+            team = self.__ships[shipId].get()['team'].getSelf()
             if team:
                 for player in team['players']:
-                    if player.getSelf()['id'] == data['playerId']:
+                    if player.getSelf()['id'] == userId:
                         team['players'].remove(player)
-                        return player
+                        return
         return None, None
 
-    def deletePlayers(self, data):
-        if data:
-            team = self.__ships[data['shipId']].get()['team'].getSelf()
+    def deletePlayers(self, shipId):
+        if shipId:
+            team = self.__ships[shipId].get()['team'].getSelf()
             if team:
                 for player in team['players']:
                     team['players'].remove(player)
                 return True
         return None, None
+
+    def getShips(self):
+        ships = []
+        for key in self.__ships:
+            ships.append(self.__ships[key].get())
+        return ships
 
 

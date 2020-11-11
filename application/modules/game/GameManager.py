@@ -18,14 +18,25 @@ class GameManager(BaseManager):
     async def __leaveShip(self, sid, data):
         user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
         if user:
-            ship = self.__Game.getShipByUserId(user['id'])
+            ship = self.__Game.getShipByUserId(userId=user['id'])
             if ship:
-                self.__Game.deletePlayer(dict(shipId=ship.get()['id'], userId=user['id']))
-                await self.sio.emit(self.MESSAGES['LEAVE_SHIP'], True, room=ship.get()['id'])
+                self.__Game.deletePlayer(shipId=ship.get()['id'], userId=user['id'])
+                await self.sio.emit(self.MESSAGES['LEAVE_SHIP'], user, room=ship.get()['id'])
                 return
         await self.sio.emit(self.MESSAGES['LEAVE_SHIP'], False, room=sid)
+        return
 
-    async def startGame(self, data):
+    def __checkIsEndGame(self):
+        ships = self.__Game.getShips()
+        if ships:
+            for ship in ships:
+                if ship['health'] <= 0:
+                    return ship
+                else:
+                    return False
+        return False
+
+    async def startGame(self, sid,  data):
         if data:
             user = data['owner']
             if user:
@@ -43,10 +54,17 @@ class GameManager(BaseManager):
         return False
 
     async def endGame(self, sid, data):
-        # Serega chmo
         # написать функцию которая проверяла бы состояние игры
         # передавать флаг о том что игра закончена
         # Если флаг True Удалить всех игроков из команды
         # И посудину
         # Иначе если флаг False игра продолжается
+        ship = self.__checkIsEndGame()
+        if data and ship:
+            await self.sio.emit(self.MESSAGES['END_GAME'], True, room=ship['id'])
+            self.mediator.get(self.TRIGGERS['REMOVE_TEAM'], ship['team'])
+            self.__Game.deleteShip(shipId=ship['id'])
+            await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True))
+            return
+        await self.sio.emit(self.MESSAGES['END_GAME'], False, room=ship['id'])
         return

@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import styled from 'styled-components';
 import { eventTypes } from '../../constants/event-types';
 import BasicCharacterController from './character/basic-character-controller';
+import Map, { gameMap, sprites } from './map';
 
 const floorImg = require('../../assets/floor_diffuse.png');
 
@@ -14,10 +15,34 @@ const StyledGame = styled.div`
   left: 0;
 `;
 
+interface GameDataInterface {
+  map: gameMap;
+  sprites: sprites;
+}
+
+const gameData: GameDataInterface = {
+  map: [
+    [0, 1, 1, 1, 0],
+    [1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1],
+    [0, 1, 1, 1, 0],
+    [0, 1, 1, 1, 0],
+    [0, 0, 1, 0, 0],
+  ],
+  sprites: {
+    0: floorImg,
+    1: floorImg,
+  },
+};
+
 const Game = () => {
   const mount = useRef<HTMLDivElement>(null);
   const clock = useRef<THREE.Clock>(new THREE.Clock());
   const characterControls = useRef<BasicCharacterController | null>(null);
+  const map = useRef<Map>(new Map(gameData.map, gameData.sprites));
 
   useEffect(() => {
     let { clientWidth: width, clientHeight: height } = mount.current!;
@@ -35,27 +60,7 @@ const Game = () => {
     renderer.setSize(width, height);
     renderer.outputEncoding = THREE.sRGBEncoding;
 
-    const textureLoader = new THREE.TextureLoader();
-
-    const floorMaterial = new THREE.MeshStandardMaterial({
-      roughness: 0.8,
-      color: 0xffffff,
-      metalness: 0.2,
-    });
-    textureLoader.load(floorImg, (map) => {
-      map.wrapS = THREE.RepeatWrapping;
-      map.wrapT = THREE.RepeatWrapping;
-      map.repeat.set(1, 2).multiplyScalar(10);
-      floorMaterial.map = map;
-      floorMaterial.needsUpdate = true;
-    }, (e) => console.log(`Progress: ${e}`), (e) => console.error(e))
-
-    const floorGeometry = new THREE.PlaneBufferGeometry(270, 430);
-    const floorMesh = new THREE.Mesh(floorGeometry, floorMaterial);
-    floorMesh.receiveShadow = true;
-    floorMesh.rotation.x = -Math.PI / 2.0;
-    floorMesh.position.set(0, 0, 0);
-    scene.add(floorMesh);
+    scene.add(map.current.render());
 
     const pointLight = new THREE.PointLight(0xffffff, 0.9);
     pointLight.position.set(100, 250, 120);
@@ -101,9 +106,6 @@ const Game = () => {
     return () => {
       stop();
       window.removeEventListener(eventTypes.resize, handleResize, false);
-
-      floorGeometry.dispose();
-      floorMaterial.dispose();
     }
   }, []);
 

@@ -5,6 +5,7 @@ const bannerImage = require('../../assets/banner.png');
 
 const StyledContainer = styled.div<BannerProps>`
   position: relative;
+  top: -40px;
   height: ${props => props.height};
 `;
 

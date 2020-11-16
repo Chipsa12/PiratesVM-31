@@ -1,16 +1,16 @@
 export interface Player {
+  id: number;
   name: string;
-  id: string | number;
   readyToStart: boolean;
 }
 
 export interface TeamListInterface {
-  teamId: string;
+  teamId: number;
   name: string;
   ownerName: Player['name'];
-  players: number;
-  minPlayers: number;
-  isPlaying: boolean;
+  players: Player['name'][];
+  playersCount: number;
+  maxPlayers: number;
   isPrivate: boolean;
 }
 
@@ -19,8 +19,8 @@ export interface JoinedTeamInterface {
   name: string;
   password: string;
   players: Player[];
+  maxPlayers: number;
   options?: {
-    minPlayers?: number;
     speed?: number;
     messageDistance?: number;
     quests?: {

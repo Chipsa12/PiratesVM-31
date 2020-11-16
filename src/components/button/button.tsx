@@ -6,18 +6,17 @@ const StyledButton = styled.button<{ variant: ButtonProps['variant'] }>`
   color: ${props => props.variant === 'primary' ? props.theme.colors.primary : props.theme.colors.text};
   font-size: 2rem;
   margin: 4px;
-  padding: 20px 10px;
+  
   border: none;
   border-radius: 4px;
   user-select: none;
-  line-height: 2.3rem;
   transition: all 220ms ease-in-out;
   cursor: pointer;
   text-transform: uppercase;
 
   &:hover {
     background: ${({ theme }) => theme.colors.accent};
-    border: 1px solid;
+    
   }
 
   &:focus {

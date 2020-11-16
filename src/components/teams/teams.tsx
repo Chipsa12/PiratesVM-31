@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import Modal from 'react-modal';
 import styled from 'styled-components';
 import Scrollbar from '../scrollbar';
 import Team from './team';
@@ -7,16 +8,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectAllTeams } from '../../redux/selectors/team.selectors';
 import { addTeams } from '../../redux/actions/team.actions';
 import socket from '../../helpers/socket';
+import Button from '../button/button';
 import { SOCKET_EVENTS } from '../../constants/socket.constants';
+import CreateTeam from '../create-team';
+import AuthContext from '../../contexts/auth.context';
 
 const StyledWrapper = styled.div`
-  padding: 7px;
+  margin: 20px 30px;
+  background: ${(({ theme }) => theme.colors.secondary)};
 `;
 
 const StyledTitle = styled.div`
-  margin: 10px 0 5px;
+  margin: 10px 10px 5px;
   font-size: ${(props) => props.theme.fontSizes[1]};
-  color: ${(props) => props.theme.colors.text};
+  color: ${(props) => props.theme.colors.light};
   text-transform: uppercase;
 `;
 
@@ -26,19 +31,42 @@ const StyledTeamsContainer = styled.div`
   height: 100%;
   display: flex;
   justify-content: space-between;
+  border: 1px solid ${({ theme: { colors }}) => colors.text};
 `;
 
 const StyledTeams = styled.div`
   margin-right: 20px;
-  background: ${(({ theme }) => theme.colors.secondary)};
   display: flex;
-  flex-basis: 100%;
+  flex-direction: column;
+  width: 1000px;
+`;
+
+const TeamsHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const StyledButton = styled(Button)`
+  width: 142px;
+  height: 23px;
+  font-size: ${props => props.theme.fontSizes[0]};
+  box-shadow: 0 4px 0 ${props => props.theme.colors.blacks[0]};
+  background: ${props => props.theme.colors.text};
+  color: ${props => props.theme.colors.primary};
+  
+  &:hover {
+    background: ${({ theme }) => theme.colors.text_accent};
+    border: 1px solid;
+  }
 `;
 
 const Teams = (): React.ReactElement => {
   const teams = useSelector(selectAllTeams);
-  const [selectedTeamId, setSelectedTeamId] = useState<string>('');
+  const [selectedTeamId, setSelectedTeamId] = useState<number>(teams[0]?.teamId);
+  const [modalIsOpen,setIsOpen] = useState(false);
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     const getTeams = (newTeams): any => dispatch(addTeams(newTeams));
@@ -48,24 +76,33 @@ const Teams = (): React.ReactElement => {
     };
   }, [dispatch]);
 
+  const handleCreateRoom = (): void => {
+    setIsOpen(true)
+  }
+
   return (
     <StyledWrapper>
-      <StyledTitle>Комнаты</StyledTitle>
       <StyledTeamsContainer>
         <StyledTeams>
+          <TeamsHeader>
+            <StyledTitle>Комнаты</StyledTitle>
+            <StyledButton onClick={(handleCreateRoom)}>Создать</StyledButton>
+          </TeamsHeader>
           <Scrollbar>
-            {Object.entries(teams).map(([key, { name, teamId }]) => (
+            {teams.map(({ name, teamId, isPrivate }) => (
               <Team
-                key={key}
+                key={teamId}
                 name={name}
                 isSelected={teamId === selectedTeamId}
+                isPrivate={isPrivate}
                 onClick={() => setSelectedTeamId(teamId)}
               />
             ))}
           </Scrollbar>
         </StyledTeams>
-        <TeamDetails details={teams[selectedTeamId] ? teams[selectedTeamId] : null} />
+        <TeamDetails details={teams.find(({ teamId }) => teamId === selectedTeamId) || teams[0]} />
       </StyledTeamsContainer>
+      <CreateTeam modalIsOpen={modalIsOpen} setIsOpen={setIsOpen}/>
     </StyledWrapper>
   );
 };

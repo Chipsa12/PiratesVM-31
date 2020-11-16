@@ -4,8 +4,8 @@ import CSS from 'csstype';
 
 const StyledTextarea = styled.textarea`
   width: 100%;
-  font-size: 2.2rem;
-  padding: 20px 8px;
+  font-size: ${props => props.theme.fontSizes[0]};
+  padding: 4px 8px;
   color: ${({ theme }) => theme.colors.text};
   border: none;
   border-bottom: 2px solid ${({ theme }) => theme.colors.accent};
@@ -13,7 +13,7 @@ const StyledTextarea = styled.textarea`
   outline: none;
   
   &::placeholder {
-    font-size: 2rem;
+    font-size: ${props => props.theme.fontSizes[0]};
     color: ${({ theme }) => theme.colors.text};
   }
   

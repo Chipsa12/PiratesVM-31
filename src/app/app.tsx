@@ -1,4 +1,5 @@
 import React from 'react';
+import Modal from 'react-modal';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import styled, { ThemeProvider } from 'styled-components';
 import { routes } from '../config/routes';
@@ -10,6 +11,8 @@ import { AuthProvider } from '../contexts/auth.context';
 import { Provider } from 'react-redux';
 
 const authBackground = require('../assets/auth.png');
+
+Modal.setAppElement('#root');
 
 const Container = styled.div`
   display: flex;

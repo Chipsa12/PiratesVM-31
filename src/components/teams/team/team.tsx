@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import PrivateUnSelectedSVG from '../../../icons/private-unselectedSVG';
-import PrivateSelectedSVG from '../../../icons/private-selectedSVG';
+import PrivateSVG from '../../../icons/privateSVG';
 import { TeamListInterface } from '../../../interfaces/team.interfaces';
 
 const StyledTeam = styled.div<{ isSelected: boolean }>`
@@ -30,14 +29,6 @@ const TeamInfo = styled.div`
   align-items: center;
 `;
 
-const PrivateIconUnSelected = styled(PrivateUnSelectedSVG)`
-  margin: 0 10px;
-`;
-
-const PrivateIconSelected = styled(PrivateSelectedSVG)`
-  margin: 10 10px;
-`;
-
 interface TeamProps {
   name: TeamListInterface['name'];
   isPrivate?: TeamListInterface['isPrivate'];
@@ -57,7 +48,7 @@ const Team: React.FC<TeamProps> = ({
     </StyledTeamName>
     <TeamInfo>
       {
-        isPrivate && (isSelected ? <PrivateIconSelected/> : <PrivateIconUnSelected/>)
+        isPrivate && <PrivateSVG isSelected={isSelected} style={{ marginRight: 10 }}/>
       }
       0/0
     </TeamInfo>

@@ -30,8 +30,24 @@ const HeaderLeft = styled.div`
   left: 0;
   display: flex;
   flex-direction: row;
-  align-items: center;
   padding: 10px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledButton = styled(Button)`
+  background: none;
+  color: ${props => props.theme.colors.text};
+
+  &:hover {
+    border: none;
+    background: none;
+  }
+
+  &:focus {
+    border: none;
+    background: none;
+  }
 `;
 
 const Text = styled.span`
@@ -53,9 +69,9 @@ const Lobby = () => {
     <Container>
       <Header>
         <HeaderLeft>
-          <Button onClick={logout}>
+          <StyledButton onClick={logout}>
             <CloseSVG/>
-          </Button>
+          </StyledButton>
           <Text>Masha</Text>
         </HeaderLeft>
         <Title title="Найти игру"/>

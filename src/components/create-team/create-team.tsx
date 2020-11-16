@@ -166,7 +166,11 @@ const CreateTeam = ({
   }
 
   return (
-    <Modal isOpen={modalIsOpen} style={modalStyles}>
+    <Modal 
+      isOpen={modalIsOpen}
+      style={modalStyles}
+      onRequestClose={handleBackButton}
+    >
       <StyledWrapper>
         <Header>
           <StyledButton onClick={handleBackButton}><BackSVG/></StyledButton>

@@ -89,11 +89,12 @@ const Teams = (): React.ReactElement => {
             <StyledButton onClick={(handleCreateRoom)}>Создать</StyledButton>
           </TeamsHeader>
           <Scrollbar>
-            {teams.map(({ name, teamId }) => (
+            {teams.map(({ name, teamId, isPrivate }) => (
               <Team
                 key={teamId}
                 name={name}
                 isSelected={teamId === selectedTeamId}
+                isPrivate={isPrivate}
                 onClick={() => setSelectedTeamId(teamId)}
               />
             ))}

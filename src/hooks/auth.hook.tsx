@@ -52,8 +52,6 @@ const useAuth = () => {
   }, []);
 
   const logout: AuthContextInterface['logout'] = useCallback(() => {
-    console.log(' eee');
-    
     setLoading(true);
     socket.emit(SOCKET_EVENTS.USER_LOGOUT, { token: userDetails.token });
     socket.once(SOCKET_EVENTS.USER_LOGOUT, (isLogout) => {

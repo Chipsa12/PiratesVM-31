@@ -1,5 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
+
+import socket from '../../helpers/socket';
+import { SOCKET_EVENTS } from '../../constants/socket.constants';
+
 import Scrollbar from "../scrollbar/scrollbar";
 
 interface User {
@@ -57,32 +61,19 @@ const StyledLi = styled.li`
 `;
 
 const OnlineUsers = () => {
-  const onlineUsers = [
-    {
-      id: "1",
-      name: "Vasya"
-    },
-    {
-      id: "2",
-      name: "Petya"
-    },
-    {
-      id: "3",
-      name: "Masha"
-    },
-    {
-      id: "4",
-      name: "Sasha"
-    },
-    {
-      id: "5",
-      name: "Petya"
-    },
-    {
-      id: "6",
-      name: "Vasya"
-    },
-  ]
+  const [onlineUsers, setOnlineUsers] = useState([])
+
+  const updateOnlineUsers = (users) => {
+    setOnlineUsers(users)
+  }
+
+  useEffect(() => {
+    socket.on(SOCKET_EVENTS.USERS_ONLINE, updateOnlineUsers);
+    return () => {
+      socket.off(SOCKET_EVENTS.USERS_ONLINE, updateOnlineUsers);
+    }
+  }, []);
+  
   return (
     <Container>
       <Wrapper>

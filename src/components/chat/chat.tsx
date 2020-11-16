@@ -17,7 +17,7 @@ import OnlineUsers from '../online-users/online-users';
 const Container = styled.div`
   margin: 20px 30px;
   width: 733px;
-  height: 100%;
+  height: 300px;
   max-height: 300px;
   display: flex;
   flex-direction: row;
@@ -26,7 +26,7 @@ const Container = styled.div`
 
 const StyledChat = styled.div`
   width: 540px;
-  height: 100%;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;

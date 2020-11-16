@@ -9,7 +9,7 @@ const StyledMessages = styled.div`
   flex-flow: column;
   color: ${({ theme }) => theme.colors.text};
   width: 100%;
-  height: 100%;
+  height: 218px;
 `;
 
 const Messages: React.FC<MessagesInterface> = ({

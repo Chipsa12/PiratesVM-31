@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import CharacterFSM from '../character-fsm';
 import BasicCharacterControllerInput from './basic-character-controller-input';
 import FiniteStateMachine from '../finite-state-machine';
+import { config } from '../../config';
 
-const characterImg = require('../../../../assets/error.png');
+import characterImg from '../../../../assets/pirate/pirate_aqua.png';
 
 type params = {
-  scene: THREE.Scene;
+  gameScene: THREE.Group;
   camera: THREE.Camera;
 };
 
@@ -16,7 +17,7 @@ class BasicCharacterController extends FiniteStateMachine {
   private deceleration = new THREE.Vector3(-5, 0, -5);
   private acceleration = new THREE.Vector3(100, 0, 100);
   private velocity = new THREE.Vector3(0, 0, 0);
-  private input: BasicCharacterControllerInput;
+  private readonly input: BasicCharacterControllerInput;
   private target;
 
   constructor(params: params) {
@@ -82,15 +83,17 @@ class BasicCharacterController extends FiniteStateMachine {
   private loadModels() {
     const textureLoader = new THREE.TextureLoader();
 
-    const characterMaterial = new THREE.MeshStandardMaterial();
+    const characterMaterial = new THREE.SpriteMaterial();
     textureLoader.load(characterImg, (map) => {
       characterMaterial.map = map;
       characterMaterial.needsUpdate = true;
 
-      const characterGeometry = new THREE.BoxGeometry(10, 2, 10);
-      this.target = new THREE.Mesh(characterGeometry, characterMaterial);
+      this.target = new THREE.Sprite(characterMaterial);
+      this.target.scale.set(config.PLAYER.WIDTH, config.PLAYER.HEIGHT, 1);
+      this.target.position.y = 1;
+      this.target.name = config.PLAYER.NAME;
       this.target.receiveShadow = true;
-      this.params.scene.add(this.target);
+      this.params.gameScene.add(this.target);
     });
   }
 }

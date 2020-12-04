@@ -1,6 +1,6 @@
 import { eventTypes } from '../../../../constants/event-types';
 
-type ControlStates = {
+export type ControlStates = {
   forward: boolean,
   backward: boolean,
   left: boolean,
@@ -12,15 +12,15 @@ type ControlStates = {
 class BasicCharacterControllerInput {
   keys: ControlStates;
 
-  constructor () {
-    this.keys = {
+  constructor(proxy: ProxyHandler<ControlStates>) {
+    this.keys = new Proxy({
       forward: false,
       backward: false,
       left: false,
       right: false,
       space: false,
       shift: false,
-    };
+    }, proxy);
     document.addEventListener(eventTypes.keydown, (e) => this.onKeyDown(e), false);
     document.addEventListener(eventTypes.keyup, (e) => this.onKeyUp(e), false);
   }

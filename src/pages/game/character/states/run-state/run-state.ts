@@ -8,7 +8,7 @@ class RunState extends BaseState {
 
   update(timeElapsed, input) {
     super.update(timeElapsed, input);
-    if (input.keys.forward || input.keys.backward) {
+    if (input.keys.forward || input.keys.backward || input.keys.left || input.keys.right) {
       if (!input.keys.shift) {
         this.parent.setState(CharacterStatesEnum.walk);
       }

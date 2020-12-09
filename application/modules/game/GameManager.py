@@ -11,6 +11,7 @@ class GameManager(BaseManager):
         self.mediator.subscribe(self.EVENTS['START_GAME'], self.startGame)
 
         self.sio.on(self.MESSAGES['END_GAME'], self.endGame)
+        self.sio.on(self.MESSAGE['MOVE'], self.move)
 
     async def __disconnect(self, data):
         await self.__leaveShip(data['sid'], data)
@@ -69,4 +70,17 @@ class GameManager(BaseManager):
                 self.__Game.deleteShip(shipId=ship['id'])
                 await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True))
             return
+        return False
+
+    async def move(self, sid, data):
+        if data:
+            user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
+            player = self.__Game.getPlayerByUserId(user['id'])
+            if player:
+                self.__Game.move(player, data)
+                await self.sio.emit(self.MESSAGES['MOVE'], self.__Game.getScene())
+                return True
+            await self.sio.emit(self.MESSAGES['MOVE'], False, room=sid)
+            return False
+        await self.sio.emit(self.MESSAGES['MOVE'], False, room=sid)
         return False

@@ -2,7 +2,7 @@ SETTINGS = {
     'DB': {
         'NAME': 'vm31-db',
         'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'PORT': '5433',
         'USER': 'vm31-user',
         'PASS': '12345678',
     },
@@ -67,5 +67,6 @@ SETTINGS = {
         'LEAVE_SHIP': 'GAME/LEAVE_SHIP',
         'START_GAME': 'GAME/START_GAME',
         'END_GAME': 'GAME/END_GAME',
+        'MOVE': 'GAME/MOVE'
     },
 }

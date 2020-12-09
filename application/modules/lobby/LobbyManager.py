@@ -10,7 +10,7 @@ class LobbyManager(BaseManager):
 
         self.__teams = {}
 
-        self.__teams[1] = Team(dict(
+        '''self.__teams[1] = Team(dict(
             teamId=1,
             ownerName='1',
             name='QQWWE',
@@ -35,7 +35,7 @@ class LobbyManager(BaseManager):
                 Player(dict(id=3, name='4', readyToStart=True))],
             maxPlayers=3,
             roomId="333"
-        ))
+        ))'''
 
 
         #TRIGGERS
@@ -189,7 +189,10 @@ class LobbyManager(BaseManager):
                                         teamId=owner['id'],
                                         ownerName=owner['name'],
                                         name=data['name'],
-                                        players=[Player(dict(id=owner['id'], name=owner['name']))],#преобразовать в JSON
+                                        players=[Player(dict(id=owner['id'],
+                                                             name=owner['name'],
+                                                             coordX=owner['coord']['x'],
+                                                             coordY=owner['coord']['y']))],#преобразовать в JSON
                                         password=passwordTeam if data['isPrivate'] else '',
                                         isPrivate=data['isPrivate'],
                                         maxPlayers=data['maxPlayers'] if 'maxPlayers' in data else 10,

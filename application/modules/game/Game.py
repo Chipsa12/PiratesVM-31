@@ -62,4 +62,38 @@ class Game:
             ships.append(self.__ships[key].get())
         return ships
 
+    def getScene(self):
+        self.getShips()
 
+    def move(self, player, data):
+        if data and player:
+            if data['up']:
+                player['coordY'] += 1
+            if data['down']:
+                player['coordY'] -= 1
+            if data['left']:
+                player['coordX'] -= 1
+            if data['right']:
+                player['coordX'] += 1
+            return player
+        return False
+
+    def getPlayerByUserId(self, userId):
+        if userId:
+            for key in self.__ships:
+                team = self.__ships[key]['team'].getSelf()
+                for player in team['players']:
+                    if player.getSelf()['id'] == userId:
+                        return player.getSelf()
+                    return None
+        return None
+
+
+'''
+в бд новый кор.(удал.)
+матрица для кор.
+для кор. оборудовваание брать из бд(min 4)
+рандомить место players в кор.
+сцену возвращ. (кор.,игроков, оборудование)
+движение организовать 
+'''

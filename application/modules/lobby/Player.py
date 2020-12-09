@@ -3,9 +3,17 @@ class Player:
         self.id = data['id']
         self.name = data['name']
         self.readyToStart = data['readyToStart'] if 'readyToStart' in data else False
+        self.coordX = data['coordX'] if 'x' in data else 0
+        self.coordY = data['coordY'] if 'y' in data else 0
+
 
     def get(self):
         return self.name
 
     def getSelf(self):
-        return dict(id=self.id, name=self.name, readyToStart=self.readyToStart)
+        return dict(id=self.id,
+                    name=self.name,
+                    readyToStart=self.readyToStart,
+                    coordX=self.coordX,
+                    coordY=self.coordY
+                    )

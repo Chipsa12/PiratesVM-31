@@ -11,7 +11,7 @@ class GameManager(BaseManager):
         self.mediator.subscribe(self.EVENTS['START_GAME'], self.startGame)
 
         self.sio.on(self.MESSAGES['END_GAME'], self.endGame)
-        self.sio.on(self.MESSAGE['MOVE'], self.move)
+        self.sio.on(self.MESSAGES['MOVE'], self.move)
 
     async def __disconnect(self, data):
         await self.__leaveShip(data['sid'], data)
@@ -43,12 +43,18 @@ class GameManager(BaseManager):
         if data:
             user = data['owner']
             if user:
+                wheel = self.db.getFurnitureByName('wheel')
+                rope = self.db.getFurnitureByName('rope')
+                cannon = self.db.getFurnitureByName('cannon')
+                anchor = self.db.getFurnitureByName('anchor')
                 ship = self.__Game.createShip(dict(id=user['id'],
                                                    team=data['team'],
-                                                   wheel=self.db.getFurnitureByName('wheel'),
-                                                   rope=self.db.getFurnitureByName('rope'),
-                                                   cannon=self.db.getFurnitureByName('cannon'),
-                                                   anchor=self.db.getFurnitureByName('anchor')
+                                                   furniture=[
+                                                                wheel,
+                                                                rope,
+                                                                cannon,
+                                                                anchor
+                                                            ]
                                                    ))
                 if ship:
                     await self.sio.emit(self.MESSAGES['START_GAME'], ship.get(), room=data['team']['roomId'])

@@ -1,4 +1,4 @@
-
+from random import randint
 
 from aiohttp import web
 import socketio
@@ -13,7 +13,8 @@ from application.modules.game.GameManager import GameManager
 # audio ?
 # pirates
 from application.modules.common.Logic import Logic
-#from application.router.Router import Router
+
+# from application.router.Router import Router
 
 db = DB(SETTINGS['DB'])
 mediator = Mediator(SETTINGS['MEDIATOR']['EVENTS'], SETTINGS['MEDIATOR']['TRIGGERS'])
@@ -28,7 +29,6 @@ ChatManager(db, mediator, sio, SETTINGS['MESSAGES'], SETTINGS['CHAT'])
 LobbyManager(mediator=mediator, sio=sio, MESSAGES=SETTINGS['MESSAGES'])
 
 GameManager(db=db, mediator=mediator, sio=sio, MESSAGES=SETTINGS['MESSAGES'])
-
 
 
 print('i am here in my heart')

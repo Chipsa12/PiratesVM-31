@@ -1,3 +1,5 @@
+from random import randint
+
 from .Ship import Ship
 
 
@@ -6,40 +8,51 @@ class Game:
 
         self.__ships = {}
         self.__map = [
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                        [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
-                        [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-                        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-                        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-                        [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-                        [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                    ]
+            [0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 2, 1, 1, 2, 0, 0, 0, 0],
+            [0, 0, 0, 2, 1, 1, 1, 1, 2, 0, 0, 0],
+            [0, 0, 2, 1, 1, 1, 1, 1, 1, 2, 0, 0],
+            [0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+            [0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],
+            [0, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0],
+            [0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0]
+        ]
+
+    def __randomCoord(self, furnitures):
+        while True:
+            coordX = randint(0, len(self.__map) - 1)
+            coordY = randint(0, len(self.__map[coordX]) - 1)
+            for furniture in furnitures:
+                if (coordX != furniture.get()['coordX']) and (coordY != furniture.get()['coordY']) and (self.__map[coordX][coordY] == 1):
+                    check = True
+                else:
+                    check = False
+            if check:
+                break
+        return coordX, coordY
 
     def createShip(self, data):
         if data:
             ship = Ship(dict(
                 id=data['id'],
-                team=data['team'],
-                furniture=[
+                team=self.getCoordPlayer(data['team']),
+                furniture=self.getCoordFurniture(furnitures=[
                     data['wheel'],
-                    data['rope'],
+                    data['anchor'],
                     data['cannon'],
-                    data['anchor']
-                ]
+                    data['rope']
+                ])
             ))
             self.__ships[data['id']] = ship
             return ship
@@ -93,13 +106,17 @@ class Game:
     def move(self, player, data):
         if data and player:
             if data['up']:
-                player['coordY'] += 1
+                if self.__map[player['coordX']][player['coordY'] + 1] == 1:
+                    player['coordY'] += 1
             if data['down']:
-                player['coordY'] -= 1
+                if self.__map[player['coordX']][player['coordY'] - 1] == 1:
+                    player['coordY'] -= 1
             if data['left']:
-                player['coordX'] -= 1
+                if self.__map[player['coordX'] - 1][player['coordY']] == 1:
+                    player['coordX'] -= 1
             if data['right']:
-                player['coordX'] += 1
+                if self.__map[player['coordX'] + 1][player['coordY']] == 1:
+                    player['coordX'] += 1
             return player
         return False
 
@@ -112,6 +129,53 @@ class Game:
                         return player.getSelf()
                     return None
         return None
+
+    def getCoordFurniture(self, furnitures):
+        # Рандомить место в зависимости от предмета
+        for furniture in furnitures:
+            if furniture.get()['name'] == 'wheel':
+                while True:
+                    coordX = round(((len(self.__map) - 1) / 4) * 3)
+                    coordY = randint(2, len(self.__map[coordX]) - 3)
+                    if self.__map[coordX][coordY] == 1:
+                        furniture.get()['coordX'] = coordX
+                        furniture.get()['coordY'] = coordY
+                        break
+            if furniture.get()['name'] == 'anchor':
+                while True:
+                    coordX = randint(0, len(self.__map) - 1)
+                    coordY = randint(0, len(self.__map[coordX]) - 1)
+                    if self.__map[coordX][coordY] == 2:
+                        furniture.get()['coordX'] = coordX
+                        furniture.get()['coordY'] = coordY
+                        break
+            if furniture.get()['name'] == 'cannon':
+                while True:
+                    coordX = randint(0, len(self.__map) - 1)
+                    if (self.__map[coordX][0] and self.__map[coordX][len(self.__map[coordX]) - 1]) == 2:
+                        side = randint(0, 1)
+                        coordY = 1 if side == 0 else (len(self.__map[coordX]) - 2)
+                        if self.__map[coordX][coordY] == 1:
+                            furniture.get()['coordX'] = coordX
+                            furniture.get()['coordY'] = coordY
+                            break
+            if furniture.get()['name'] == 'rope':
+                coordX = randint(0, round((len(self.__map) - 1) / 3))
+                coordY = randint(0, len(self.__map[coordX]) - 1)
+                if self.__map[coordX][coordY] == 1:
+                    furniture.get()['coordX'] = coordX
+                    furniture.get()['coordY'] = coordY
+                    break
+        return furnitures
+
+
+    def getCoordPlayer(self, team, furnitures):
+        for players in team.getSelf():
+            for player in players:
+                coordX, coordY = self.__randomCoord(furnitures)
+                player.getSelf()['coordX'] = coordX
+                player.getSelf()['coordY'] = coordY
+        return team
 
 
 '''

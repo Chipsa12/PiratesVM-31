@@ -141,3 +141,8 @@ class DB:
         self.cursor.execute(query, (data['message'], data['name'], data['room']))
         self.connect.commit()
         return True
+
+    @toArrayOfDicts
+    def getAllFurniture(self):
+        self.cursor.execute("SELECT id, name, chance_of_breakdown, durability, time_to_do_task FROM furniture ")
+        return self.cursor.fetchall()

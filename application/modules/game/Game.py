@@ -34,7 +34,9 @@ class Game:
             coordX = randint(0, len(self.__map) - 1)
             coordY = randint(0, len(self.__map[coordX]) - 1)
             for furniture in furnitures:
-                if (coordX != furniture.get()['coordX']) and (coordY != furniture.get()['coordY']) and (self.__map[coordX][coordY] == 1):
+                if (coordX != furniture.get()['coordX']) and \
+                   (coordY != furniture.get()['coordY']) and \
+                   (self.__map[coordX][coordY] == 1):
                     check = True
                 else:
                     check = False
@@ -100,8 +102,8 @@ class Game:
             ships.append(self.__ships[key].get())
         return ships
 
-    def getScene(self):
-        self.getShips()
+    def getScene(self, player):
+        return self.getShipByUserId(player.getSelf()['id'])
 
     def move(self, player, data):
         if data and player:
@@ -182,7 +184,7 @@ class Game:
 в бд новый кор.(удал.)
 *матрица для кор.
 *для кор. оборудовваание брать из бд(min 4)
-рандомить место players в кор.
-сцену возвращ. (кор.,игроков, оборудование)
-движение организовать 
+*рандомить место players в кор.
+*сцену возвращ. (кор.,игроков, оборудование)
+*движение организовать 
 '''

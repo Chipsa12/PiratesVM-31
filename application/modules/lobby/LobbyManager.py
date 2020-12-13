@@ -191,8 +191,8 @@ class LobbyManager(BaseManager):
                                         name=data['name'],
                                         players=[Player(dict(id=owner['id'],
                                                              name=owner['name'],
-                                                             coordX=owner['coord']['x'],
-                                                             coordY=owner['coord']['y']))],#преобразовать в JSON
+                                                             coordX=0,
+                                                             coordY=0))],#преобразовать в JSON
                                         password=passwordTeam if data['isPrivate'] else '',
                                         isPrivate=data['isPrivate'],
                                         maxPlayers=data['maxPlayers'] if 'maxPlayers' in data else 10,

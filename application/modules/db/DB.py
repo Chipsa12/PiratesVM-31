@@ -13,6 +13,7 @@ def toDict(func):
             return d
         else:
             return None
+
     return wrapper
 
 
@@ -27,6 +28,7 @@ def toArrayOfDicts(func):
                 d[key] = row[key]
             arr.append(d)
         return arr
+
     return wrapper
 
 
@@ -36,6 +38,7 @@ def toString(func):
         row = func(*args, **kwargs)
         for key in row:
             return row[key]
+
     return wrapper
 
 
@@ -62,7 +65,7 @@ class DB:
     def getAllUsers(self):
         self.cursor.execute("SELECT id, name, login, token FROM users")
         return self.cursor.fetchall()
-    
+
     @toArrayOfDicts
     def getUsersOnline(self):
         self.cursor.execute("SELECT id, name, login, token FROM users WHERE token != '' ")
@@ -116,7 +119,6 @@ class DB:
         self.connect.commit()
         return True
 
-
     @toDict
     def getAllTestResults(self):
         query = "SELECT id, name, result, date_time FROM tests ORDER BY date_time"
@@ -146,3 +148,10 @@ class DB:
     def getAllFurniture(self):
         self.cursor.execute("SELECT id, name, chance_of_breakdown, durability, time_to_do_task FROM furniture ")
         return self.cursor.fetchall()
+
+    def insertTeam(self, teamId, name, password, isPrivate, maxPlayers, roomId, playersId):
+        query = "INSERT INTO teams (team_id, name, password, is_private, max_players, room_id, players_id) VALUES (" \
+                "%s, %s, %s, %s, %s, %s, %s)"
+        self.cursor.execute(query, (teamId, name, password, isPrivate, maxPlayers, roomId, playersId))
+        self.connect.commit()
+        return True

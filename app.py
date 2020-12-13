@@ -30,6 +30,7 @@ LobbyManager(mediator=mediator, sio=sio, MESSAGES=SETTINGS['MESSAGES'])
 
 GameManager(db=db, mediator=mediator, sio=sio, MESSAGES=SETTINGS['MESSAGES'])
 
+db.insertTeam(1, "bomji", "123", True, 3, "666", [1, 2, 3])
 
 print('i am here in my heart')
 

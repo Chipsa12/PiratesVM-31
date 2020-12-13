@@ -198,6 +198,7 @@ class LobbyManager(BaseManager):
                                         maxPlayers=data['maxPlayers'] if 'maxPlayers' in data else 10,
                                         roomId=roomId
                                         ))
+            self.db.insertTeam(owner['id'], data['name'], passwordTeam, data['isPrivate'], data['maxPlayers'], roomId, '''playersId''')
             self.sio.enter_room(sid, roomId)
             await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], self.__teams[owner['id']].get())
             await self.sio.emit(self.MESSAGES['CREATE_TEAM'], self.__teams[owner['id']].get(), room=roomId)

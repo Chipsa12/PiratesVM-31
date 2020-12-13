@@ -1,13 +1,12 @@
 from ..BaseManager import BaseManager
 from .Game import Game
-from .furniture import Furniture
+from .furniture.Furniture import Furniture
 
 
 class GameManager(BaseManager):
     def __init__(self, db, mediator, sio, MESSAGES):
         super().__init__(db=db, mediator=mediator, sio=sio, MESSAGES=MESSAGES)
         self.__Game = Game()
-        self.__Furniture = Furniture(db)
 
         self.mediator.subscribe(self.EVENTS['USER_LOGOUT'], self.__disconnect)
         self.mediator.subscribe(self.EVENTS['START_GAME'], self.startGame)
@@ -41,22 +40,21 @@ class GameManager(BaseManager):
             return deathShips
         return False
 
-    async def startGame(self, sid,  data):
+    def __getFurniture(self):
+        arr = []
+        furnitures = self.db.getAllFurniture()
+        for furniture in furnitures:
+            arr.append(Furniture(furniture))
+        return arr
+
+    async def startGame(self, sid, data):
         if data:
-            user = data['owner']
-            if user:
-                wheel = self.db.getFurnitureByName('wheel')
-                rope = self.db.getFurnitureByName('rope')
-                cannon = self.db.getFurnitureByName('cannon')
-                anchor = self.db.getFurnitureByName('anchor')
-                ship = self.__Game.createShip(dict(id=user['id'],
+            player = data['owner']
+            if player:
+                furniture = self.__getFurniture()
+                ship = self.__Game.createShip(dict(id=player['id'],
                                                    team=data['team'],
-                                                   furniture=[
-                                                                wheel,
-                                                                rope,
-                                                                cannon,
-                                                                anchor
-                                                            ]
+                                                   furniture=furniture
                                                    ))
                 if ship:
                     await self.sio.emit(self.MESSAGES['START_GAME'], ship.get(), room=data['team']['roomId'])

@@ -47,14 +47,9 @@ class Game:
     def createShip(self, data):
         if data:
             ship = Ship(dict(
-                id=data['id'],
-                team=self.getCoordPlayer(data['team']),
-                furniture=self.getCoordFurniture(furnitures=[
-                    data['wheel'],
-                    data['anchor'],
-                    data['cannon'],
-                    data['rope']
-                ])
+                        id=data['id'],
+                        team=self.getCoordPlayer(data['team']),
+                        furniture=self.getCoordFurniture(furnitures=data['furniture'])
             ))
             self.__ships[data['id']] = ship
             return ship
@@ -79,7 +74,7 @@ class Game:
 
     def deletePlayer(self, userId, shipId):
         if userId and shipId:
-            team = self.__ships[shipId].get()['team'].getSelf()
+            team = self.__ships[shipId].getSelf()['team'].getSelf()
             if team:
                 for player in team['players']:
                     if player.getSelf()['id'] == userId:
@@ -89,7 +84,7 @@ class Game:
 
     def deletePlayers(self, shipId):
         if shipId:
-            team = self.__ships[shipId].get()['team'].getSelf()
+            team = self.__ships[shipId].getSelf()['team'].getSelf()
             if team:
                 for player in team['players']:
                     team['players'].remove(player)

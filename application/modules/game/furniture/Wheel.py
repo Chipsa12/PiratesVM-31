@@ -1,5 +1,5 @@
-from .BaseFurniture import BaseFurniture
+from .Furniture import Furniture
 
-class Wheel(BaseFurniture):
+class Wheel(Furniture):
     def __init__(self, data):
         super().__init__(data=data)

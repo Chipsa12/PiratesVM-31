@@ -1,5 +1,5 @@
-from .BaseFurniture import BaseFurniture
+from .Furniture import Furniture
 
-class Anchor(BaseFurniture):
+class Anchor(Furniture):
     def __init__(self, data):
         super().__init__(data=data)

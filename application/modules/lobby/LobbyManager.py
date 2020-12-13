@@ -226,7 +226,7 @@ class LobbyManager(BaseManager):
                 if self.__checkTeamIsReady(team=team):
                     await self.sio.emit(self.MESSAGES['READY_TO_START'], True, room=team['roomId'])
                     #начать игру...
-                    self.mediator.call(self.EVENTS['START_GAME'], dict(team=team, owner=owner, sid=sid))
+                    self.mediator.call(self.EVENTS['START_GAME'], dict(team=team, owner=player, sid=sid))
                     return
         await self.sio.emit(self.MESSAGES['READY_TO_START'], False, room=sid)
         return False

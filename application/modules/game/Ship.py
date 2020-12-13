@@ -3,7 +3,9 @@ class Ship:
         self.id = data['id']
         self.team = data['team']
         self.furniture = data['furniture']
-        self.health = 100
 
     def get(self):
-        return dict(id=self.id, team=self.team, furniture=self.furniture, health=self.health)
+        return dict(id=self.id, teamId=self.team['id'], furniture=self.furniture)
+
+    def getSelf(self):
+        return dict(id=self.id, team=self.team, furniture=self.furniture)

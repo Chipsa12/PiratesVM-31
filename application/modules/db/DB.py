@@ -155,3 +155,32 @@ class DB:
         self.cursor.execute(query, (teamId, name, password, isPrivate, maxPlayers, roomId, playersId))
         self.connect.commit()
         return True
+
+    def insertShip(self, shipId, playersId, furnitureId, readyToUse):
+        query = "INSERT INTO ships (ship_id, players_id, furniture_id, ready_to_use) VALUES (%s, %s, %s, %s,)"
+        self.cursor.execute(query, (shipId, playersId, furnitureId, readyToUse))
+        self.connect.commit()
+        return True
+
+    def deleteShip(self, shipId):
+        query = "DELETE FROM ships WHERE ship_id == %s"
+        self.cursor.execute(query, shipId)
+        self.connect.commit()
+        return True
+
+    def deleteTeam(self, teamId):
+        query = "DELETE FROM teams WHERE team_id == %s"
+        self.cursor.execute(query, teamId)
+        self.connect.commit()
+        return True
+
+    def updateTeam(self, teamId, playerId):
+        query = "UPDATE teams SET players_id = %s WHERE team_id = %s "
+        self.cursor.execute(query, (playerId, teamId))
+        self.connect.commit()
+        return True
+
+    def getPlayersIdByTeamId(self, teamId):
+        query = "SELECT players_id FROM teams"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()

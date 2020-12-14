@@ -170,6 +170,20 @@ class LobbyManager(BaseManager):
             return True
         return False
 
+    def __updatePlayersId(self, userId, teamId):
+        playersId = self.db.getPlayersIdByTeamId(teamId)
+        playersId.append(userId)
+        self.db.updateTeam(teamId, playersId)
+        return
+
+    def __deletePlayerId(self, userId, teamId):
+        playersId = self.db.getPlayersIdByTeamId(teamId)
+        for playerId in playersId:
+            if playerId == userId:
+                playersId.remove(userId)
+        self.db.updateTeam(teamId, playersId)
+        return
+
     async def updateTeamList(self, sid, data):
         teams = []
         for key in self.__teams:

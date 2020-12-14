@@ -47,6 +47,20 @@ class GameManager(BaseManager):
             arr.append(Furniture(furniture))
         return arr
 
+    def __getPlayersId(self, players):
+        arr = []
+        for player in players:
+            arr.append(player['id'])
+        return arr
+
+    def __getFurnitureIdAndReadyToUse(self, furnitures):
+        arrFurnitureId = []
+        arrReadyToUse = []
+        for furniture in furnitures:
+            arrFurnitureId.append(furniture.get()['id'])
+            arrReadyToUse.append(furniture.get()['ready_to_use'])
+        return arrFurnitureId, arrReadyToUse
+
     async def startGame(self, sid, data):
         if data:
             player = data['owner']
@@ -57,6 +71,8 @@ class GameManager(BaseManager):
                                                    furniture=furniture
                                                    ))
                 if ship:
+                    arrFurnitureId, arrReadyToUse = self.__getFurnitureIdAndReadyToUse(furniture)
+                    self.db.insertShip(player['id'], self.__getPlayersId(data['team']['players'].getSelf()), arrFurnitureId, arrReadyToUse)
                     await self.sio.emit(self.MESSAGES['START_GAME'], ship.get(), room=data['team']['roomId'])
                     return True
         await self.sio.emit(self.MESSAGES['START_GAME'], False, room=data['sid'])
@@ -74,6 +90,8 @@ class GameManager(BaseManager):
                 await self.sio.emit(self.MESSAGES['END_GAME'], True, room=ship['id'])
                 self.mediator.get(self.TRIGGERS['REMOVE_TEAM'], ship['team'])
                 self.__Game.deleteShip(shipId=ship['id'])
+                self.db.deleteShip(ship['id'])
+                self.db.deleteTeam(ship['id'])
                 await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True))
             return True
         await self.sio.emit(self.MESSAGES['END_GAME'], False, room=sid)

@@ -97,23 +97,34 @@ class Game:
             ships.append(self.__ships[key].get())
         return ships
 
-    def getScene(self, player):
-        return self.getShipByUserId(player.getSelf()['id'])
+    def getScene(self, shipId):
+        ship = self.__ships[shipId].get()
+        if ship:
+            return dict(map=self.__map, ship=ship)
+        return False
 
     def move(self, player, data):
         if data and player:
-            if data['up']:
-                if self.__map[player['coordX']][player['coordY'] + 1] == 1:
+            if data['up'] and self.__map[player['coordX']][player['coordY'] + 1] == 1:
                     player['coordY'] += 1
-            if data['down']:
-                if self.__map[player['coordX']][player['coordY'] - 1] == 1:
+            if data['down'] and self.__map[player['coordX']][player['coordY'] - 1] == 1:
                     player['coordY'] -= 1
-            if data['left']:
-                if self.__map[player['coordX'] - 1][player['coordY']] == 1:
+            if data['left'] and self.__map[player['coordX'] - 1][player['coordY']] == 1:
                     player['coordX'] -= 1
-            if data['right']:
-                if self.__map[player['coordX'] + 1][player['coordY']] == 1:
+            if data['right'] and self.__map[player['coordX'] + 1][player['coordY']] == 1:
                     player['coordX'] += 1
+            if data['up-left'] and self.__map[player['coordX'] - 1][player['coordY'] + 1] == 1:
+                    player['coordY'] += 1
+                    player['coordx'] -= 1
+            if data['up-right'] and self.__map[player['coordX'] + 1][player['coordY'] + 1] == 1:
+                    player['coordY'] += 1
+                    player['coordx'] += 1
+            if data['down-left'] and self.__map[player['coordX'] - 1][player['coordY'] - 1] == 1:
+                    player['coordY'] -= 1
+                    player['coordx'] -= 1
+            if data['down-right'] and self.__map[player['coordX'] + 1][player['coordY'] - 1] == 1:
+                    player['coordY'] -= 1
+                    player['coordx'] += 1
             return player
         return False
 
@@ -173,13 +184,3 @@ class Game:
                 player.getSelf()['coordX'] = coordX
                 player.getSelf()['coordY'] = coordY
         return team
-
-
-'''
-в бд новый кор.(удал.)
-*матрица для кор.
-*для кор. оборудовваание брать из бд(min 4)
-*рандомить место players в кор.
-*сцену возвращ. (кор.,игроков, оборудование)
-*движение организовать 
-'''

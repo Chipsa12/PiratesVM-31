@@ -71,9 +71,7 @@ class GameManager(BaseManager):
                                                    furniture=furniture
                                                    ))
                 if ship:
-                    arrFurnitureId, arrReadyToUse = self.__getFurnitureIdAndReadyToUse(furniture)
-                    self.db.insertShip(player['id'], self.__getPlayersId(data['team']['players'].getSelf()), arrFurnitureId, arrReadyToUse)
-                    await self.sio.emit(self.MESSAGES['START_GAME'], ship.get(), room=data['team']['roomId'])
+                    await self.sio.emit(self.MESSAGES['START_GAME'], self.__Game.getScene(player['id']), room=data['team']['roomId'])
                     return True
         await self.sio.emit(self.MESSAGES['START_GAME'], False, room=data['sid'])
         return False
@@ -91,7 +89,6 @@ class GameManager(BaseManager):
                 self.mediator.get(self.TRIGGERS['REMOVE_TEAM'], ship['team'])
                 self.__Game.deleteShip(shipId=ship['id'])
                 self.db.deleteShip(ship['id'])
-                self.db.deleteTeam(ship['id'])
                 await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True))
             return True
         await self.sio.emit(self.MESSAGES['END_GAME'], False, room=sid)
@@ -100,12 +97,11 @@ class GameManager(BaseManager):
     async def move(self, sid, data):
         if data:
             user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
-            player = self.__Game.getPlayerByUserId(user['id'])
-            if player:
-                self.__Game.move(player, data)
-                await self.sio.emit(self.MESSAGES['MOVE'], self.__Game.getScene(player))
-                return True
-            await self.sio.emit(self.MESSAGES['MOVE'], False, room=sid)
-            return False
+            if user:
+                player = self.__Game.getPlayerByUserId(user['id'])
+                if player:
+                    self.__Game.move(player, data)
+                    await self.sio.emit(self.MESSAGES['MOVE'], self.__Game.getScene(player))
+                    return True
         await self.sio.emit(self.MESSAGES['MOVE'], False, room=sid)
         return False

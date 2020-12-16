@@ -38,6 +38,7 @@ class UserManager(BaseManager):
         if 'token' in data:
             for key in self.users:
                 user = self.users[key]
+                print(user.getSelf())
                 if user.getSelf()['token'] == data['token']:
                     return user.getSelf()
         return None
@@ -75,17 +76,19 @@ class UserManager(BaseManager):
             user = self.db.getUserByLogin(login=login)
             if user:
                 await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
-                return
-            token = self.__generateToken(login)
-            self.db.insertUser(name=name, login=login, password=password, token=token)
-            userData = self.db.getUserByToken(token)
-            userData['sid'] = sid
-            self.users[userData['id']] = User(userData)
-            await self.sio.emit(self.MESSAGES['USER_SIGNUP'], self.users[userData['id']].getSelf(), room=sid)
-            await self.getUsersOnline(sid)
-            await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True), room=sid)
-            return
+                return False
+            else:
+                token = self.__generateToken(login)
+                self.db.insertUser(name=name, login=login, password=password, token=token)
+                userData = self.db.getUserByToken(token)
+                userData['sid'] = sid
+                self.users[userData['id']] = User(userData)
+                await self.sio.emit(self.MESSAGES['USER_SIGNUP'], self.users[userData['id']].getSelf(), room=sid)
+                await self.getUsersOnline(sid)
+                await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True), room=sid)
+                return True
         await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
+        return False
 
     async def auth(self, sid, data):
         login = data['login']
@@ -104,7 +107,7 @@ class UserManager(BaseManager):
                 await self.getUsersOnline(sid)
                 # отправить пользователю список команд
                 await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True), room=sid)
-                return
+                return True
         await self.sio.emit(self.MESSAGES['USER_LOGIN'], False, room=sid)
 
     async def logout(self, sid, data):
@@ -125,8 +128,9 @@ class UserManager(BaseManager):
             # ответить пользователю о результатах его логаута
             await self.sio.emit(self.MESSAGES['USER_LOGOUT'], True, room=sid)
             await self.getUsersOnline(sid)
-            return
+            return True
         await self.sio.emit(self.MESSAGES['USER_LOGOUT'], False, room=sid)
+        return False
 
     async def autoLogin(self, sid, data):
         if 'token' in data:
@@ -141,5 +145,6 @@ class UserManager(BaseManager):
                 await self.getUsersOnline(sid)
                 await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True),
                                     room=sid)
-                return
+                return True
         await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], False, room=sid)
+        return False

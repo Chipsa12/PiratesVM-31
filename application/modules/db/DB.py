@@ -74,7 +74,7 @@ class DB:
     @toDict
     def getUserById(self, userId):
         query = "SELECT id, name, login, token FROM users WHERE id = %s"
-        self.cursor.execute(query, userId)
+        self.cursor.execute(query, [userId])
         return self.cursor.fetchone()
 
     @toDict
@@ -156,11 +156,12 @@ class DB:
         self.connect.commit()
         return True
 
-    def insertShip(self, shipId, playersId, furnitureId, readyToUse):
-        query = "INSERT INTO ships (ship_id, players_id, furniture_id, ready_to_use) VALUES (%s, %s, %s, %s,)"
-        self.cursor.execute(query, (shipId, playersId, furnitureId, readyToUse))
+    def insertShip(self, shipId, teamId, furnitureId):
+        query = "INSERT INTO ships (ship_id, team_id, globalCoord) VALUES (%s, %s, %s)"
+        self.cursor.execute(query, (shipId, teamId, furnitureId))
         self.connect.commit()
         return True
+
 
     def deleteShip(self, shipId):
         query = "DELETE FROM ships WHERE ship_id == %s"

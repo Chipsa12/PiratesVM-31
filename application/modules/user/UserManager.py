@@ -120,7 +120,7 @@ class UserManager(BaseManager):
             user = self.__getUserBySid(sid=sid)
         if user:  # is not None:
             # бросить событие, что пользователь мухожук
-            self.mediator.call(self.EVENTS['USER_LOGOUT'], dict(sid=sid, token=user['token']))
+            await self.mediator.call(self.EVENTS['USER_LOGOUT'], dict(sid=sid, token=user['token']))
             # удалить пользователя из self.users
             del self.users[user['id']]
             # перезаписать токен в БД
@@ -142,7 +142,7 @@ class UserManager(BaseManager):
                 user['token'] = token
                 self.users.update({user['id']: User(user)})
                 await self.sio.emit(self.MESSAGES['USER_AUTOLOGIN'], dict(token=token), room=sid)
-                await self.getUsersOnline(sid)
+                await self.getUsersOnline()
                 await self.sio.emit(self.MESSAGES['TEAM_LIST'], self.mediator.get(self.TRIGGERS['TEAM_LIST'], True),
                                     room=sid)
                 return True

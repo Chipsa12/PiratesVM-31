@@ -189,7 +189,7 @@ class LobbyManager(BaseManager):
         for key in self.__teams:
             team = self.__teams[key].get()
             teams.append(team)
-        await self.sio.emit(self.MESSAGES['TEAM_LIST'], teams, room=sid)
+        await self.sio.emit(self.MESSAGES['TEAM_LIST'], teams)
         return
 
     async def createTeam(self, sid, data):

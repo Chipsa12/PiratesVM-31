@@ -266,20 +266,17 @@ class LobbyManager(BaseManager):
         user = self.__getUserByToken(data=data)
         if user:
             team = self.__findTeamByTeamId(teamId=data['teamId'])
-            if team:
-                if team.getSelf()['playersCount'] < team.getSelf()['maxPlayers']:
-                    if team.getSelf()['isPrivate']:
-                        if team.getSelf()['password'] == data['password']:
-                            self.__deleteUserFromAllTeams(userId=user['id'], sid=sid)
-                            team.getSelf()['players'].append(Player(dict(id=user['id'],
-                                                                         name=user['name']
-                                                                         )))
-                            self.sio.enter_room(sid, team.getSelf()['roomId'])
-                            await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], True, room=sid)
-                            await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], team.get())
-                            return True
-                        await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], False, room=sid)
-                        return False
+            if team and (team.getSelf()['playersCount'] < team.getSelf()['maxPlayers']):
+                if team.getSelf()['isPrivate'] and (team.getSelf()['password'] == data['password']):
+                    self.__deleteUserFromAllTeams(userId=user['id'], sid=sid)
+                    team.getSelf()['players'].append(Player(dict(id=user['id'],
+                                                                 name=user['name']
+                                                                 )))
+                    self.sio.enter_room(sid, team.getSelf()['roomId'])
+                    await self.sio.emit(self.MESSAGES['JOIN_TO_TEAM'], True, room=sid)
+                    await self.sio.emit(self.MESSAGES['UPDATE_TEAM_LIST'], team.get())
+                    return True
+                else:
                     self.__deleteUserFromAllTeams(userId=user['id'], sid=sid)
                     team.getSelf()['players'].append(Player(dict(id=user['id'],
                                                                  name=user['name']

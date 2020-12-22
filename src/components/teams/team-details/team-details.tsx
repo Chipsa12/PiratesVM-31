@@ -10,6 +10,7 @@ import { SOCKET_EVENTS } from '../../../constants/socket.constants';
 import AuthContext from '../../../contexts/auth.context';
 import { TeamListInterface } from '../../../interfaces/team.interfaces';
 import { TEAM_ROOM_URL } from '../../../constants/url.constants';
+import { core } from '../../../config/core';
 
 const StyledWrapper = styled.div`
   position: relative;
@@ -107,6 +108,7 @@ const TeamDetails: React.FC<TeamDetailsProps> = ({
       socket.emit(SOCKET_EVENTS.JOIN_TO_TEAM, { token, teamId: details.teamId, password });
       socket.once(SOCKET_EVENTS.JOIN_TO_TEAM, (data) => {
         if (data) {
+          console.log('Joined to team: ', data)
           dispatch(joinTeam(data));
           history.push(TEAM_ROOM_URL);
         } else {
@@ -135,7 +137,7 @@ const TeamDetails: React.FC<TeamDetailsProps> = ({
           <StyledDetail>
           <StyledTitle>Игроки:</StyledTitle>
             <StyledDetailPlayers>
-              {details.playersCount}/{details.maxPlayers}
+              {details.playersCount}/{details.maxPlayers || core.MAX_ROOM_PLAYERS_DEFAULT}
             </StyledDetailPlayers>
           </StyledDetail>
         </StyledDetails>

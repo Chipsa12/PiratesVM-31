@@ -28,7 +28,7 @@ class BasicCharacterController extends FiniteStateMachine {
   private acceleration = new THREE.Vector3(100, 0, 100);
   private velocity = new THREE.Vector3(0, 0, 0);
   private readonly input: BasicCharacterControllerInput;
-  private target;
+  private target?: THREE.Sprite;
   private characterModels: characterModels = {
     front: new THREE.SpriteMaterial(),
     back: new THREE.SpriteMaterial(),
@@ -60,20 +60,28 @@ class BasicCharacterController extends FiniteStateMachine {
   }
 
   private setCharacterMaterial(model: 'forward' | 'backward' | 'right' | 'left' | string) {
-    switch(model) {
-      case 'forward':
-        this.target.material = this.characterModels.back;
-        break;
-      case 'backward':
-        this.target.material = this.characterModels.front;
-        break;
-      case 'right':
-        this.target.material = this.characterModels.right;
-        break;
-      case 'left':
-        this.target.material = this.characterModels.left;
-        break;
+    if (this.target) {
+      switch(model) {
+        case 'forward':
+          this.target.material = this.characterModels.back;
+          break;
+        case 'backward':
+          this.target.material = this.characterModels.front;
+          break;
+        case 'right':
+          this.target.material = this.characterModels.right;
+          break;
+        case 'left':
+          this.target.material = this.characterModels.left;
+          break;
+      }
     }
+  }
+
+  private isAbleToMoveTo(x: number, y: number) {
+    console.log(x, y);
+    console.log(this.target?.position);
+    return true;
   }
 
   public update(timeInSeconds: number) {
@@ -98,7 +106,7 @@ class BasicCharacterController extends FiniteStateMachine {
         acc.multiplyScalar(2);
       }
 
-      if (this.input.keys.forward) {
+      if (this.input.keys.forward && this.isAbleToMoveTo(this.velocity.x, this.velocity.z - 1)) {
         this.velocity.z -= acc.z * timeInSeconds;
       }
       if (this.input.keys.backward) {
@@ -146,6 +154,7 @@ class BasicCharacterController extends FiniteStateMachine {
       this.target.position.y = 1;
       this.target.name = config.PLAYER.NAME;
       this.target.receiveShadow = true;
+      console.log(this.params.gameScene);
       this.params.gameScene.add(this.target);
     });
 

@@ -56,7 +56,7 @@ const Text = styled.span`
   color: ${(style) => style.theme.colors.light};
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
   padding: 2px 4px 20px;
   height: 807px;
   background: linear-gradient(#13514D, #156F68, #13514D);

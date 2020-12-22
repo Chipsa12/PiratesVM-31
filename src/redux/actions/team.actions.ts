@@ -2,8 +2,8 @@ import * as actions from '../../constants/action-types.constants';
 import { TeamReducerInterface } from '../reducers/team.reducer';
 import { JoinedTeamInterface } from '../../interfaces/team.interfaces';
 
-export const addTeams = (teams: TeamReducerInterface['teams']) => (dispatch) => dispatch({
-  type: actions.ADD_TEAMS,
+export const updateTeams = (teams: TeamReducerInterface['teams']) => (dispatch) => dispatch({
+  type: actions.UPDATE_TEAMS,
   payload: teams,
 });
 

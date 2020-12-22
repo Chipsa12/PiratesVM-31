@@ -1,3 +1,5 @@
+import { ControlStates } from '../../basic-character-controller/basic-character-controller-input';
+
 abstract class BaseState {
   protected parent;
 
@@ -11,7 +13,7 @@ abstract class BaseState {
   exit() {
   }
 
-  update(timeElapsed, input) {
+  update(timeElapsed: number, input: ControlStates) {
   }
 }
 

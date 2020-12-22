@@ -69,15 +69,25 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const Chat = () => {
+type ChatProps = {
+  showOnlineUsers?: boolean;
+};
+
+const Chat = ({
+  showOnlineUsers = true,
+}: ChatProps) => {
   const [message, setMessage] = useState<string>('');
   const { userDetails: { token } } = useContext(AuthContext);
   const messages = useSelector(selectMessages);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const subscribeToMessages = (newMessages: MessageInterface | MessageInterface[]) => dispatch(addMessages(newMessages));
+    const subscribeToMessages = (newMessages: MessageInterface | MessageInterface[]): void => {
+      dispatch(addMessages(newMessages));
+    }
+
     socket.on(SOCKET_EVENTS.SEND_MESSAGE, subscribeToMessages);
+
     return () => {
       socket.off(SOCKET_EVENTS.SEND_MESSAGE, subscribeToMessages);
     };
@@ -119,7 +129,7 @@ const Chat = () => {
           <StyledButton onClick={handleSendMessage}>{'>'}</StyledButton>
         </StyledMessageInput>
       </StyledChat>
-      <OnlineUsers></OnlineUsers>
+      {showOnlineUsers && <OnlineUsers />}
     </Container>
   );
 };

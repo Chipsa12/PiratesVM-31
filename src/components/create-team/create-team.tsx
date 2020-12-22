@@ -31,7 +31,7 @@ const Header = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(#0D2B29, #0C3632);  
+  background: linear-gradient(#0D2B29, #0C3632);
   height: 60px;
 `;
 
@@ -43,13 +43,13 @@ const StyledButton = styled(Button)`
   &:focus {
     border: none;
   }
-  
+
   &:hover {
     background: none;
   }
 `;
 
-const StyledCreateTeam = styled.div`
+const StyledCreateTeam = styled.form`
   display: flex;
   flex-flow: column;
   align-items: center;
@@ -92,7 +92,7 @@ const Footer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(#10685B, #0E4A46); 
+  background: linear-gradient(#10685B, #0E4A46);
   width: 100%;
 `;
 
@@ -113,11 +113,12 @@ const modalStyles = {
     background: 'none',
     inset: 0,
     border: 'none',
-  }
+  },
 };
 
 const CreateTeam = ({
-  modalIsOpen, setIsOpen
+  modalIsOpen,
+  setIsOpen,
 }): React.ReactElement => {
   const dispatch = useDispatch();
   const { userDetails: { token } } = useContext(AuthContext);
@@ -128,16 +129,21 @@ const CreateTeam = ({
     minPlayers: constants.MIN_TEAM_PLAYERS,
   });
 
-  const handleCreateTeam = (): void => {
-    socket.emit(SOCKET_EVENTS.CREATE_TEAM, { token, ...form });
-    socket.once(SOCKET_EVENTS.CREATE_TEAM, (team) => {
-      if (team) {
-        dispatch(createTeam(team));
-        history.push(TEAM_ROOM_URL);
-      } else {
-        console.log('Room is not created!')
-      }
-    });
+  const handleCreateTeam = (event: React.SyntheticEvent): void => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (form.name.trim()) {
+      socket.emit(SOCKET_EVENTS.CREATE_TEAM, { token, ...form });
+      socket.once(SOCKET_EVENTS.CREATE_TEAM, (team) => {
+        if (team) {
+          dispatch(createTeam(team));
+          history.push(TEAM_ROOM_URL);
+        } else {
+          console.log('Room is not created! Received data: ', team);
+        }
+      });
+    }
   };
 
   const handleRoomNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -163,10 +169,10 @@ const CreateTeam = ({
 
   const handleBackButton = (): void => {
     setIsOpen(false);
-  }
+  };
 
   return (
-    <Modal 
+    <Modal
       isOpen={modalIsOpen}
       style={modalStyles}
       onRequestClose={handleBackButton}
@@ -176,7 +182,7 @@ const CreateTeam = ({
           <StyledButton onClick={handleBackButton}><BackSVG/></StyledButton>
           <Title title="Создать игру" />
         </Header>
-        <StyledCreateTeam>
+        <StyledCreateTeam onSubmit={handleCreateTeam}>
           <StyledRoomName
             id="room-name"
             placeholder="Название комнаты"
@@ -192,7 +198,7 @@ const CreateTeam = ({
                 name="isPrivate"
                 type="checkbox"
                 onChange={handlePrivateGameChange}
-              /> 
+              />
             </InputWrapper>
             <Title title={'Приватная игра'}/>
           </StyledTeamPrivateContainer>

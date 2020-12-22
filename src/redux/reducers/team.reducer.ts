@@ -13,10 +13,10 @@ const INITIAL_VALUE: TeamReducerInterface = {
 
 export default (state = INITIAL_VALUE, action) => {
   switch (action.type) {
-    case actions.ADD_TEAMS:
+    case actions.UPDATE_TEAMS:
       return {
         ...state,
-        teams: [ ...state.teams, ...action.payload ],
+        teams: [ ...action.payload ],
       };
     case actions.LEAVE_TEAM:
       return {

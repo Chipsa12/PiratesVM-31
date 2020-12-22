@@ -3,7 +3,7 @@ import { JoinedTeamInterface } from '../../../interfaces/team.interfaces';
 import styled from 'styled-components';
 
 export interface TeamRoomPlayersProps {
-  players: JoinedTeamInterface['players'];
+  players?: JoinedTeamInterface['players'];
 }
 
 const StyledWrapper = styled.div`

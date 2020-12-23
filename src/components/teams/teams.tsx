@@ -1,17 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
-import Modal from 'react-modal';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Scrollbar from '../scrollbar';
 import Team from './team';
 import TeamDetails from './team-details';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectAllTeams } from '../../redux/selectors/team.selectors';
-import { addTeams } from '../../redux/actions/team.actions';
+import { updateTeams } from '../../redux/actions/team.actions';
 import socket from '../../helpers/socket';
 import Button from '../button/button';
 import { SOCKET_EVENTS } from '../../constants/socket.constants';
 import CreateTeam from '../create-team';
-import AuthContext from '../../contexts/auth.context';
 
 const StyledWrapper = styled.div`
   margin: 20px 30px;
@@ -31,7 +29,7 @@ const StyledTeamsContainer = styled.div`
   height: 100%;
   display: flex;
   justify-content: space-between;
-  border: 1px solid ${({ theme: { colors }}) => colors.text};
+  border: 1px solid ${({ theme: { colors } }) => colors.text};
 `;
 
 const StyledTeams = styled.div`
@@ -54,7 +52,7 @@ const StyledButton = styled(Button)`
   box-shadow: 0 4px 0 ${props => props.theme.colors.blacks[0]};
   background: ${props => props.theme.colors.text};
   color: ${props => props.theme.colors.primary};
-  
+
   &:hover {
     background: ${({ theme }) => theme.colors.text_accent};
     border: 1px solid;
@@ -64,21 +62,22 @@ const StyledButton = styled(Button)`
 const Teams = (): React.ReactElement => {
   const teams = useSelector(selectAllTeams);
   const [selectedTeamId, setSelectedTeamId] = useState<number>(teams[0]?.teamId);
-  const [modalIsOpen,setIsOpen] = useState(false);
+  const [modalIsOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
-    const getTeams = (newTeams): any => dispatch(addTeams(newTeams));
+    const getTeams = (newTeams): any => dispatch(updateTeams(newTeams));
+
     socket.on(SOCKET_EVENTS.TEAM_LIST, getTeams);
+
     return () => {
       socket.off(SOCKET_EVENTS.TEAM_LIST, getTeams);
     };
   }, [dispatch]);
 
   const handleCreateRoom = (): void => {
-    setIsOpen(true)
-  }
+    setIsOpen(true);
+  };
 
   return (
     <StyledWrapper>
@@ -86,7 +85,7 @@ const Teams = (): React.ReactElement => {
         <StyledTeams>
           <TeamsHeader>
             <StyledTitle>Комнаты</StyledTitle>
-            <StyledButton onClick={(handleCreateRoom)}>Создать</StyledButton>
+            <StyledButton onClick={handleCreateRoom}>Создать</StyledButton>
           </TeamsHeader>
           <Scrollbar>
             {teams.map(({ name, teamId, isPrivate }) => (

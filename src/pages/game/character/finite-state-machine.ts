@@ -1,4 +1,5 @@
 import BasicCharacterControllerInput from './basic-character-controller/basic-character-controller-input';
+import CharacterStatesEnum from './states/character-states-enum';
 
 class FiniteStateMachine {
   private readonly states;
@@ -15,7 +16,7 @@ class FiniteStateMachine {
     }
   }
 
-  public setState(name: string) {
+  public setState(name: CharacterStatesEnum) {
     const prevState = this.currentState;
 
     if (prevState) {
@@ -30,7 +31,7 @@ class FiniteStateMachine {
     state.enter(prevState);
   }
 
-  protected addState<T>(name: string, type: T) {
+  protected addState<T>(name: CharacterStatesEnum, type: T) {
     this.states[name] = type;
   }
 }

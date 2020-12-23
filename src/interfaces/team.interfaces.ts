@@ -10,7 +10,7 @@ export interface TeamListInterface {
   ownerName: Player['name'];
   players: Player['name'][];
   playersCount: number;
-  maxPlayers: number;
+  maxPlayers?: number;
   isPrivate: boolean;
 }
 
@@ -19,7 +19,7 @@ export interface JoinedTeamInterface {
   name: string;
   password: string;
   players: Player[];
-  maxPlayers: number;
+  maxPlayers?: number;
   options?: {
     speed?: number;
     messageDistance?: number;

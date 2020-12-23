@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { JoinedTeamInterface } from '../../../interfaces/team.interfaces';
 import { StyledDetail, StyledDetailPlayers } from '../../../components/teams/team-details';
+import { core } from '../../../config/core';
 
 const StyledWrapper = styled.div`
   display: flex;
@@ -28,14 +29,14 @@ const StyledSettings = styled.div`
 `;
 
 export interface TeamRoomSettingsProps {
-  team: JoinedTeamInterface;
+  team: JoinedTeamInterface | null;
 }
 
 const TeamRoomSettings: React.FC<TeamRoomSettingsProps> = ({
   team,
 }): React.ReactElement => (
   <StyledWrapper>
-    {team.password && (
+    {team?.password && (
       <StyledPasswordContainer>
         Пароль:
         <StyledPassword>{team.password}</StyledPassword>
@@ -43,20 +44,20 @@ const TeamRoomSettings: React.FC<TeamRoomSettingsProps> = ({
     <StyledSettings>
       <StyledDetail>
         <StyledDetailPlayers>
-          {team.players.length}/{team.maxPlayers}
+          {team?.players.length}/{team?.maxPlayers || core.MAX_ROOM_PLAYERS_DEFAULT}
         </StyledDetailPlayers>
       </StyledDetail>
-      {team.options?.speed && (
+      {team?.options?.speed && (
         <StyledDetail>
           Скорость:
           {team.options.speed}
         </StyledDetail>)}
-      {team.options?.messageDistance && (
+      {team?.options?.messageDistance && (
         <StyledDetail>
           Дальность передачи сообщений:
           {team.options.messageDistance}
         </StyledDetail>)}
-      {team.options?.quests && (
+      {team?.options?.quests && (
         <>
           <StyledDetail>
             Обычных заданий:

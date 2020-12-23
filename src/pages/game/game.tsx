@@ -1,12 +1,16 @@
 import React, { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import * as THREE from 'three';
 import styled from 'styled-components';
 import { eventTypes } from '../../constants/event-types';
 import BasicCharacterController from './character/basic-character-controller';
-import Map, { gameMap, sprites } from './map';
+import Map from './map';
 import { config } from './config';
+import socket from '../../helpers/socket';
+import { SOCKET_EVENTS } from '../../constants/socket.constants';
+import { selectGame } from '../../redux/selectors/game.selectors';
+import { updateGame } from '../../redux/actions/game.actions';
 
-import floorImg from '../../assets/floor_diffuse.png';
 import waterImg from '../../assets/water.png';
 
 const StyledGame = styled.div`
@@ -21,50 +25,22 @@ export type frame = {
   visible?: boolean,
 };
 
-interface GameDataInterface {
-  map: gameMap;
-  sprites: sprites;
-  frames: frame[];
-}
-
-const gameData: GameDataInterface = {
-  map: [
-    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
-    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-    [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
-    [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-  ],
-  sprites: {
-    0: '',
-    1: floorImg,
-  },
-  frames: [
-    { visible: false },
-    {},
-  ],
+export type equipment = {
+  type: 'twistlock' | 'steering wheel' | 'ship hole' | 'hammock' | 'cannon' | 'cannonball' | 'paddle' | 'robe'
+    | 'barrel' | 'barrel_with_water' | 'ladder_downstairs';
+  position: THREE.Vector2;
+  image: string;
+  entries: THREE.Vector2[];
 };
 
 const Game = () => {
+  const dispatch = useDispatch();
+  const gameData = useSelector(selectGame);
   const mount = useRef<HTMLDivElement>(null);
   const game = useRef<THREE.Group>(new THREE.Group());
   const clock = useRef<THREE.Clock>(new THREE.Clock());
   const characterControls = useRef<BasicCharacterController | null>(null);
-  const map = useRef<Map>(new Map(gameData.map, gameData.sprites, gameData.frames));
+  const map = useRef<Map>(new Map({ ...gameData }));
 
   useEffect(() => {
     let { clientWidth: width, clientHeight: height } = mount.current!;
@@ -145,11 +121,23 @@ const Game = () => {
 
     characterControls.current = new BasicCharacterController({ gameScene: game.current, camera });
 
+    const updateGameStore = (data) => {
+      if (data) {
+        console.log(`Game is updated: Received result: ${data}`);
+        dispatch(updateGame(data))
+      } else {
+        console.error(`Game is not updated: Received result: ${data}`);
+      }
+    }
+
+    socket.on(SOCKET_EVENTS.START_GAME, updateGameStore);
+
     return () => {
       stop();
+      socket.off(SOCKET_EVENTS.START_GAME, updateGameStore);
       window.removeEventListener(eventTypes.resize, handleResize, false);
     };
-  }, []);
+  }, [dispatch]);
 
   return <StyledGame ref={mount} />;
 };

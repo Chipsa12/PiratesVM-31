@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import Chat from '../../components/chat';
 import Title from '../../components/title';
@@ -53,17 +53,17 @@ const StyledButton = styled(Button)`
 const Text = styled.span`
   margin-left: 10px;
   font-size: ${(style) => style.theme.fontSizes[0]};
-  color: ${(style) => style.theme.colors.light} ;
+  color: ${(style) => style.theme.colors.light};
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
   padding: 2px 4px 20px;
   height: 807px;
   background: linear-gradient(#13514D, #156F68, #13514D);
 `;
 
-const Lobby = () => { 
-  const { logout } = useContext(AuthContext); 
+const Lobby = () => {
+  const { logout, userDetails } = useContext(AuthContext);
 
   return (
     <Container>
@@ -72,7 +72,7 @@ const Lobby = () => {
           <StyledButton onClick={logout}>
             <CloseSVG/>
           </StyledButton>
-          <Text>Masha</Text>
+          <Text>{userDetails.name}</Text>
         </HeaderLeft>
         <Title title="Найти игру"/>
       </Header>
@@ -81,7 +81,7 @@ const Lobby = () => {
         <Chat/>
       </Content>
     </Container>
-  )
+  );
 };
 
 export default Lobby;

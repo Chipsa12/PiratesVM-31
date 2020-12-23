@@ -39,12 +39,12 @@ const useAuth = () => {
   }, []);
 
   useEffect(() => {
-    if (!userDetails.isAuth) {
+    if (!userDetails.isAuth && userDetails.token) {
       setLoading(true);
       socket.emit(SOCKET_EVENTS.USER_AUTOLOGIN, { token: userDetails.token });
       socket.once(SOCKET_EVENTS.USER_AUTOLOGIN, (data) => {
         if (data) {
-          handleLoginSuccess(data)
+          handleLoginSuccess(data);
         }
         setLoading(false);
       });
@@ -62,21 +62,25 @@ const useAuth = () => {
           isAuth: false,
         });
         localStorage.setItem(TOKEN_STORAGE, '');
+      } else {
+        console.log('Some error occurred during logout. Received data: ', isLogout);
       }
       setLoading(false);
     });
-  }, []);
+  }, [userDetails]);
 
   const registration: AuthContextInterface['registration'] = useCallback(({ login, password }) => {
     setLoading(true);
     const hash = md5(password + login);
-    socket.emit(SOCKET_EVENTS.USER_SIGNUP, { login, hash })
+    socket.emit(SOCKET_EVENTS.USER_SIGNUP, { login, hash });
     socket.once(SOCKET_EVENTS.USER_SIGNUP, (data) => {
       if (data) {
         handleLoginSuccess(data);
+      } else {
+        console.log('Some error occurred during registration. Received data: ', data);
       }
       setLoading(false);
-    })
+    });
   }, []);
 
   return { userDetails, loading, login, logout, registration };

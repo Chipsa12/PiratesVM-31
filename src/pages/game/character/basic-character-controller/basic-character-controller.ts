@@ -78,12 +78,6 @@ class BasicCharacterController extends FiniteStateMachine {
     }
   }
 
-  private isAbleToMoveTo(x: number, y: number) {
-    console.log(x, y);
-    console.log(this.target?.position);
-    return true;
-  }
-
   public update(timeInSeconds: number) {
     if (this.target) {
       this.stateMachine.update(timeInSeconds, this.input);
@@ -106,7 +100,7 @@ class BasicCharacterController extends FiniteStateMachine {
         acc.multiplyScalar(2);
       }
 
-      if (this.input.keys.forward && this.isAbleToMoveTo(this.velocity.x, this.velocity.z - 1)) {
+      if (this.input.keys.forward) {
         this.velocity.z -= acc.z * timeInSeconds;
       }
       if (this.input.keys.backward) {

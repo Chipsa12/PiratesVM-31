@@ -108,26 +108,33 @@ class Game:
     def move(self, player, data):
         if data and player:
             if data['up'] and self.__mapShip[player['coordX']][player['coordY'] + 1] == 1:
-                    player['coordY'] += 1
+                player['coordY'] += 1
+                return dict(player=player, direction=data)
             if data['down'] and self.__mapShip[player['coordX']][player['coordY'] - 1] == 1:
-                    player['coordY'] -= 1
+                player['coordY'] -= 1
+                return dict(player=player, direction=data)
             if data['left'] and self.__mapShip[player['coordX'] - 1][player['coordY']] == 1:
-                    player['coordX'] -= 1
+                player['coordX'] -= 1
+                return dict(player=player, direction=data)
             if data['right'] and self.__mapShip[player['coordX'] + 1][player['coordY']] == 1:
-                    player['coordX'] += 1
+                player['coordX'] += 1
+                return dict(player=player, direction=data)
             if data['up-left'] and self.__mapShip[player['coordX'] - 1][player['coordY'] + 1] == 1:
-                    player['coordY'] += 1
-                    player['coordx'] -= 1
+                player['coordY'] += 1
+                player['coordx'] -= 1
+                return dict(player=player, direction=data)
             if data['up-right'] and self.__mapShip[player['coordX'] + 1][player['coordY'] + 1] == 1:
-                    player['coordY'] += 1
-                    player['coordx'] += 1
+                player['coordY'] += 1
+                player['coordx'] += 1
+                return dict(player=player, direction=data)
             if data['down-left'] and self.__mapShip[player['coordX'] - 1][player['coordY'] - 1] == 1:
-                    player['coordY'] -= 1
-                    player['coordx'] -= 1
+                player['coordY'] -= 1
+                player['coordx'] -= 1
+                return dict(player=player, direction=data)
             if data['down-right'] and self.__mapShip[player['coordX'] + 1][player['coordY'] - 1] == 1:
-                    player['coordY'] -= 1
-                    player['coordx'] += 1
-            return player
+                player['coordY'] -= 1
+                player['coordx'] += 1
+                return dict(player=player, direction=data)
         return False
 
     def getPlayerByUserId(self, userId):

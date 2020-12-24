@@ -8,7 +8,9 @@ class Player:
 
 
     def get(self):
-        return self.name
+        return dict(id=self.id,
+                    name=self.name,
+                    readyToStart=self.readyToStart)
 
     def getSelf(self):
         return dict(id=self.id,

@@ -1,11 +1,12 @@
 class Message:
     def __init__(self, data):
+        self.userId=data['userId']
         self.name = data['name']
         self.message = data['message']
-        self.room = data['room'] if 'room' in data else ''
+        self.roomId = data['room'] if 'room' in data else ''
 
     def get(self):
-        return dict(name=self.name, message=self.message)
+        return dict(userId=self.userId,name=self.name, message=self.message)
 
     def getSelf(self):
-        return dict(name=self.name, message=self.message, room=self.room)
+        return dict(userId=self.userId,name=self.name, message=self.message, roomId=self.roomId)

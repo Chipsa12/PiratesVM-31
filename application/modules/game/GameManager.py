@@ -100,8 +100,7 @@ class GameManager(BaseManager):
             if user:
                 player = self.__Game.getPlayerByUserId(user['id'])
                 if player:
-                    self.__Game.move(player, data)
-                    await self.sio.emit(self.MESSAGES['MOVE'], self.__Game.getScene(player))
+                    await self.sio.emit(self.MESSAGES['MOVE'], self.__Game.move(player, data))
                     return True
         await self.sio.emit(self.MESSAGES['MOVE'], False, room=sid)
         return False

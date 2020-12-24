@@ -47,11 +47,12 @@ class ChatManager(BaseManager):
     # отпрваить сообщение
     async def sendMessageInRoom(self, sid, data):
         user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
-        roomId = self.mediator.get(self.TRIGGERS['GET_ROOM_ID'], data)
+        roomId = self.mediator.get(self.TRIGGERS['GET_ROOM_ID'], user['id'])
         if user and roomId:
-            message = Message(dict(name=user['name'],
-                                          message=data['message'],
-                                          room=roomId,))
+            message = Message(dict( userId=user['id'],
+                                    name=user['name'],
+                                    message=data['message'],
+                                    roomId=roomId,))
             self.db.insertMessage(message.getSelf())
             await self.sio.emit(self.MESSAGES['SEND_MESSAGE_IN_ROOM'], message.get(), room=roomId)
             return
@@ -60,36 +61,10 @@ class ChatManager(BaseManager):
     async def sendMessage(self, sid, data):
         user = self.mediator.get(self.TRIGGERS['GET_USER_BY_TOKEN'], data)
         if user:
-            message = Message(dict(name=user['name'],
-                                          message=data['message']))
+            message = Message(dict( userId=user['id'],
+                                    name=user['name'],
+                                    message=data['message']))
             self.db.insertMessage(message.getSelf())
             await self.sio.emit(self.MESSAGES['SEND_MESSAGE'], message.get())
             return 
         await self.sio.emit(self.MESSAGES['SEND_MESSAGE'], False, room=sid)
-
-    # отправить сообщение в echoChat
-    '''async def sendMessageToEchoChat(self, sid, data):
-        room = self.__CHAT['ROOMS']['ECHO']
-        senderToken = data['token']
-        senderCoord = None
-        # по нашему token находим наши координаты
-        for userCoord in self.usersCoord:
-            if userCoord['token'] == senderToken:
-                senderCoord = userCoord['point']
-                break
-        # подписываем пользователей находящихся на определённом расстоянии
-        for userCoord in self.usersCoord:
-            # Измеряем расстояние между двумя игроками
-            distance = self.mediator.get(
-                self.TRIGGERS['COUNT_DISTANCE'],
-                dict(point1=senderCoord, point2=userCoord['point'])
-            )
-            if distance <= self.__CHAT['ECHO_DISTANCE']:
-                for userSid in self.__usersSid:
-                    if userSid['token'] == userCoord['token']:
-                        self.subscribeRoom(userSid['sid'], room)
-        # отправляем сообщение всем в комнате
-        await self.sio.emit('sendMessage', data, room)
-        # удаляем всех подписчиков из комнаты
-        for user in self.__usersSid:
-            self.unsubscribeRoom(user['sid'], room)'''

@@ -38,7 +38,6 @@ class UserManager(BaseManager):
         if 'token' in data:
             for key in self.users:
                 user = self.users[key]
-                print(user.getSelf())
                 if user.getSelf()['token'] == data['token']:
                     return user.getSelf()
         return None
@@ -65,7 +64,7 @@ class UserManager(BaseManager):
             users.append(self.users[key].get())
         return users
 
-    async def getUsersOnline(self, sid):
+    async def getUsersOnline(self):
         await self.sio.emit(self.MESSAGES['USERS_ONLINE'], self.__getUsersOnline())
 
     async def registration(self, sid, data):
@@ -73,8 +72,7 @@ class UserManager(BaseManager):
         login = data['login']
         password = data['hash']
         if name and login and password:
-            user = self.db.getUserByLogin(login=login)
-            if user:
+            if self.db.getUserByLogin(login=login):
                 await self.sio.emit(self.MESSAGES['USER_SIGNUP'], False, room=sid)
                 return False
             else:
